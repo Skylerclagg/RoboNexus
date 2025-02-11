@@ -1,0 +1,1023 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3D0583BB2AFC4CF70047A393 /* Matft in Frameworks */ = {isa = PBXBuildFile; productRef = 3D0583BA2AFC4CF70047A393 /* Matft */; };
+		3D50E10829C8915C002FE201 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D50E10729C8915C002FE201 /* Launch Screen.storyboard */; };
+		3D86DDB12A3A3ACC00826BB4 /* Matft in Frameworks */ = {isa = PBXBuildFile; productRef = 3D86DDB02A3A3ACC00826BB4 /* Matft */; };
+		3D943E622AFBD247009EF365 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D943E152AFBC823009EF365 /* WidgetKit.framework */; };
+		3D943E632AFBD247009EF365 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D943E172AFBC823009EF365 /* SwiftUI.framework */; };
+		3D943E662AFBD248009EF365 /* MatchUpdatesBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D943E652AFBD248009EF365 /* MatchUpdatesBundle.swift */; };
+		3D943E682AFBD248009EF365 /* MatchUpdatesLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D943E672AFBD248009EF365 /* MatchUpdatesLiveActivity.swift */; };
+		3D943E6E2AFBD24B009EF365 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D943E6D2AFBD24B009EF365 /* Assets.xcassets */; };
+		3DAFC80E2A2640EB00A0C41A /* CoreML in Resources */ = {isa = PBXBuildFile; fileRef = 3DAFC80D2A2640EB00A0C41A /* CoreML */; };
+		3DB11E52299543DC001DDB02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DB11E51299543DC001DDB02 /* Assets.xcassets */; };
+		3DE63FAF2C59A59C0049939C /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D22AAA92BD9C16B001AD59E /* Config.plist */; };
+		D4A08B642D5A7B550088CDAC /* ConfigManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A08B632D5A7B330088CDAC /* ConfigManger.swift */; };
+		D4C3DA7C2D03984300C6FFF9 /* StateRegionMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */; };
+		D4C6BFC62CD26FE90034C350 /* PilotingSkillsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */; };
+		D4C6BFC82CD270B70034C350 /* ScoreCalculatorsHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C6BFC72CD270B70034C350 /* ScoreCalculatorsHome.swift */; };
+		D4C6BFCA2CD273300034C350 /* AutonomousFlightSkillsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C6BFC92CD2732F0034C350 /* AutonomousFlightSkillsCalculator.swift */; };
+		D4E7F1D02CA4B555005886B7 /* GameManual.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E7F1CF2CA4B555005886B7 /* GameManual.swift */; };
+		D4E7F1D22CA4C267005886B7 /* TeamworkScoreCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E7F1D12CA4C267005886B7 /* TeamworkScoreCalculator.swift */; };
+		D4F0846A2CA47C230032E72D /* ADCHubDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D73E3AB2AB330CD005BE836 /* ADCHubDataController.swift */; };
+		D4F0846B2CA47C230032E72D /* ADCHubActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D943E7B2AFBFA22009EF365 /* ADCHubActivityController.swift */; };
+		D4F0846C2CA47C230032E72D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5FA4942AFEAA4F00149E88 /* AppDelegate.swift */; };
+		D4F0846D2CA47C230032E72D /* ADCHubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB11E4D299543D9001DDB02 /* ADCHubApp.swift */; };
+		D4F0846E2CA47C230032E72D /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE63FA12C5808BA0049939C /* Shared.swift */; };
+		D4F084702CA47C230032E72D /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFB59C32C536BCC0061CE6C /* UserSettings.swift */; };
+		D4F084712CA47C230032E72D /* MatchRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9826E82C5553CD00C2963B /* MatchRowView.swift */; };
+		D4F084722CA47C230032E72D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB21DD42B054D6400B12803 /* RootView.swift */; };
+		D4F084732CA47C230032E72D /* Favorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB11E4F299543D9001DDB02 /* Favorites.swift */; };
+		D4F084742CA47C230032E72D /* TeamEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3219C829D1CFF300EF5500 /* TeamEventsView.swift */; };
+		D4F084752CA47C230032E72D /* TeamInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D56DC502B28B25D004DA5B9 /* TeamInfoView.swift */; };
+		D4F084762CA47C230032E72D /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3219CA29D1EA0D00EF5500 /* EventView.swift */; };
+		D4F084772CA47C230032E72D /* EventInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3219CC29D1EF1D00EF5500 /* EventInformation.swift */; };
+		D4F084782CA47C230032E72D /* EventTeams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3219CE29D31BD500EF5500 /* EventTeams.swift */; };
+		D4F084792CA47C230032E72D /* EventTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EF2B062BB7356D00A88DCE /* EventTeamView.swift */; };
+		D4F0847B2CA47C230032E72D /* EventTeamMatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3219D029D3327500EF5500 /* EventTeamMatches.swift */; };
+		D4F0847C2CA47C230032E72D /* MatchNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E7F4B2AAA1643009BA258 /* MatchNotes.swift */; };
+		D4F0847D2CA47C230032E72D /* EventDivisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E57A929F17D3500DA6296 /* EventDivisionView.swift */; };
+		D4F0847E2CA47C230032E72D /* EventDivisionAwards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D672BDE2A46544A000211A7 /* EventDivisionAwards.swift */; };
+		D4F0847F2CA47C230032E72D /* EventDivisionMatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D84D7792A40A6320043F8ED /* EventDivisionMatches.swift */; };
+		D4F084802CA47C230032E72D /* EventDivisionRankings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D01A8C229DF3D55000BBDEB /* EventDivisionRankings.swift */; };
+		D4F084812CA47C230032E72D /* EventSkillsRankings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D919AEE29F6F70C00E1724F /* EventSkillsRankings.swift */; };
+		D4F084842CA47C230032E72D /* Lookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0BE6F829A3F0C700C3EA8A /* Lookup.swift */; };
+		D4F084882CA47C360032E72D /* ADCHubData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E7F4D2AAA2B4F009BA258 /* ADCHubData.xcdatamodeld */; };
+		D4F0848D2CA47C960032E72D /* MatchUpdatesLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D943E672AFBD248009EF365 /* MatchUpdatesLiveActivity.swift */; };
+		D4F084A72CA47DDE0032E72D /* ADCHubAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F084A62CA47DDE0032E72D /* ADCHubAPI.swift */; };
+		D4F084A92CA47DEE0032E72D /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F084A82CA47DEE0032E72D /* Settings.swift */; };
+		D4F084AB2CA47E9E0032E72D /* WorldSkillsRankings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F084AA2CA47E9E0032E72D /* WorldSkillsRankings.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3DB11E5C299543DC001DDB02 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3DB11E42299543D9001DDB02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3DB11E49299543D9001DDB02;
+			remoteInfo = "VRC RoboScout";
+		};
+		3DB11E66299543DC001DDB02 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3DB11E42299543D9001DDB02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3DB11E49299543D9001DDB02;
+			remoteInfo = "VRC RoboScout";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3D1E57D329F183FD00DA6296 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DFB59B02C535D120061CE6C /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		01EF2B062BB7356D00A88DCE /* EventTeamView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTeamView.swift; sourceTree = "<group>"; };
+		3D01A8C229DF3D55000BBDEB /* EventDivisionRankings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDivisionRankings.swift; sourceTree = "<group>"; };
+		3D0BE6F829A3F0C700C3EA8A /* Lookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lookup.swift; sourceTree = "<group>"; };
+		3D1E57A929F17D3500DA6296 /* EventDivisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDivisionView.swift; sourceTree = "<group>"; };
+		3D1E57EE29F18D0400DA6296 /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		3D1E7F4B2AAA1643009BA258 /* MatchNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchNotes.swift; sourceTree = "<group>"; };
+		3D1E7F4E2AAA2B4F009BA258 /* ADCHubData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ADCHubData.xcdatamodel; sourceTree = "<group>"; };
+		3D22AAA92BD9C16B001AD59E /* Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
+		3D3219C829D1CFF300EF5500 /* TeamEventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamEventsView.swift; sourceTree = "<group>"; };
+		3D3219CA29D1EA0D00EF5500 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
+		3D3219CC29D1EF1D00EF5500 /* EventInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInformation.swift; sourceTree = "<group>"; };
+		3D3219CE29D31BD500EF5500 /* EventTeams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTeams.swift; sourceTree = "<group>"; };
+		3D3219D029D3327500EF5500 /* EventTeamMatches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTeamMatches.swift; sourceTree = "<group>"; };
+		3D50E10729C8915C002FE201 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		3D56DC502B28B25D004DA5B9 /* TeamInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamInfoView.swift; sourceTree = "<group>"; };
+		3D5FA4942AFEAA4F00149E88 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3D672BDE2A46544A000211A7 /* EventDivisionAwards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDivisionAwards.swift; sourceTree = "<group>"; };
+		3D73E3AB2AB330CD005BE836 /* ADCHubDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCHubDataController.swift; sourceTree = "<group>"; };
+		3D84D7792A40A6320043F8ED /* EventDivisionMatches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDivisionMatches.swift; sourceTree = "<group>"; };
+		3D919AEE29F6F70C00E1724F /* EventSkillsRankings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSkillsRankings.swift; sourceTree = "<group>"; };
+		3D943E152AFBC823009EF365 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		3D943E172AFBC823009EF365 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		3D943E612AFBD247009EF365 /* MatchUpdatesExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MatchUpdatesExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D943E652AFBD248009EF365 /* MatchUpdatesBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchUpdatesBundle.swift; sourceTree = "<group>"; };
+		3D943E672AFBD248009EF365 /* MatchUpdatesLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchUpdatesLiveActivity.swift; sourceTree = "<group>"; };
+		3D943E6D2AFBD24B009EF365 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3D943E6F2AFBD24B009EF365 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3D943E7B2AFBFA22009EF365 /* ADCHubActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCHubActivityController.swift; sourceTree = "<group>"; };
+		3D9826E82C5553CD00C2963B /* MatchRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchRowView.swift; sourceTree = "<group>"; };
+		3DAFC80D2A2640EB00A0C41A /* CoreML */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CoreML; sourceTree = "<group>"; };
+		3DB11E4A299543D9001DDB02 /* RoboNexus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoboNexus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DB11E4D299543D9001DDB02 /* ADCHubApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCHubApp.swift; sourceTree = "<group>"; };
+		3DB11E4F299543D9001DDB02 /* Favorites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Favorites.swift; sourceTree = "<group>"; };
+		3DB11E51299543DC001DDB02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3DB11E53299543DC001DDB02 /* RoboNexus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RoboNexus.entitlements; sourceTree = "<group>"; };
+		3DB11E5B299543DC001DDB02 /* RoboNexusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoboNexusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DB11E65299543DC001DDB02 /* RoboNexusUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoboNexusUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DB21DD42B054D6400B12803 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		3DE63FA12C5808BA0049939C /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
+		3DFB59C32C536BCC0061CE6C /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		D4A08B632D5A7B330088CDAC /* ConfigManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManger.swift; sourceTree = "<group>"; };
+		D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRegionMapping.swift; sourceTree = "<group>"; };
+		D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotingSkillsCalculator.swift; sourceTree = "<group>"; };
+		D4C6BFC72CD270B70034C350 /* ScoreCalculatorsHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreCalculatorsHome.swift; sourceTree = "<group>"; };
+		D4C6BFC92CD2732F0034C350 /* AutonomousFlightSkillsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutonomousFlightSkillsCalculator.swift; sourceTree = "<group>"; };
+		D4E7F1CF2CA4B555005886B7 /* GameManual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManual.swift; sourceTree = "<group>"; };
+		D4E7F1D12CA4C267005886B7 /* TeamworkScoreCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamworkScoreCalculator.swift; sourceTree = "<group>"; };
+		D4F084A62CA47DDE0032E72D /* ADCHubAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCHubAPI.swift; sourceTree = "<group>"; };
+		D4F084A82CA47DEE0032E72D /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		D4F084AA2CA47E9E0032E72D /* WorldSkillsRankings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldSkillsRankings.swift; sourceTree = "<group>"; };
+		D4F332FE2CA78AE300C7EE4F /* DataExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExporter.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3D943E5E2AFBD247009EF365 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D0583BB2AFC4CF70047A393 /* Matft in Frameworks */,
+				3D943E632AFBD247009EF365 /* SwiftUI.framework in Frameworks */,
+				3D943E622AFBD247009EF365 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E47299543D9001DDB02 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D86DDB12A3A3ACC00826BB4 /* Matft in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E58299543DC001DDB02 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E62299543DC001DDB02 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3D1E57ED29F18D0400DA6296 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3D1E57EE29F18D0400DA6296 /* Intents.framework */,
+				3D943E152AFBC823009EF365 /* WidgetKit.framework */,
+				3D943E172AFBC823009EF365 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3D1E7F542AAA3B5A009BA258 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				3D1E7F4D2AAA2B4F009BA258 /* ADCHubData.xcdatamodeld */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		3D943E642AFBD248009EF365 /* MatchUpdates */ = {
+			isa = PBXGroup;
+			children = (
+				3D943E652AFBD248009EF365 /* MatchUpdatesBundle.swift */,
+				3D943E672AFBD248009EF365 /* MatchUpdatesLiveActivity.swift */,
+				3D943E6D2AFBD24B009EF365 /* Assets.xcassets */,
+				3D943E6F2AFBD24B009EF365 /* Info.plist */,
+			);
+			path = MatchUpdates;
+			sourceTree = "<group>";
+		};
+		3DB11E41299543D9001DDB02 = {
+			isa = PBXGroup;
+			children = (
+				3DAFC80D2A2640EB00A0C41A /* CoreML */,
+				3DB11E4C299543D9001DDB02 /* RoboNexus */,
+				3D943E642AFBD248009EF365 /* MatchUpdates */,
+				3D1E57ED29F18D0400DA6296 /* Frameworks */,
+				3DB11E4B299543D9001DDB02 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3DB11E4B299543D9001DDB02 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3DB11E4A299543D9001DDB02 /* RoboNexus.app */,
+				3DB11E5B299543DC001DDB02 /* RoboNexusTests.xctest */,
+				3DB11E65299543DC001DDB02 /* RoboNexusUITests.xctest */,
+				3D943E612AFBD247009EF365 /* MatchUpdatesExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3DB11E4C299543D9001DDB02 /* RoboNexus */ = {
+			isa = PBXGroup;
+			children = (
+				D4A08B632D5A7B330088CDAC /* ConfigManger.swift */,
+				D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */,
+				D4C6BFC92CD2732F0034C350 /* AutonomousFlightSkillsCalculator.swift */,
+				D4C6BFC72CD270B70034C350 /* ScoreCalculatorsHome.swift */,
+				D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */,
+				3D1E7F542AAA3B5A009BA258 /* CoreData */,
+				3DB11E53299543DC001DDB02 /* RoboNexus.entitlements */,
+				3D50E10729C8915C002FE201 /* Launch Screen.storyboard */,
+				3DB11E51299543DC001DDB02 /* Assets.xcassets */,
+				3D22AAA92BD9C16B001AD59E /* Config.plist */,
+				D4F084A82CA47DEE0032E72D /* Settings.swift */,
+				D4F084AA2CA47E9E0032E72D /* WorldSkillsRankings.swift */,
+				D4F084A62CA47DDE0032E72D /* ADCHubAPI.swift */,
+				D4F332FE2CA78AE300C7EE4F /* DataExporter.swift */,
+				3D73E3AB2AB330CD005BE836 /* ADCHubDataController.swift */,
+				3D943E7B2AFBFA22009EF365 /* ADCHubActivityController.swift */,
+				3D5FA4942AFEAA4F00149E88 /* AppDelegate.swift */,
+				3DB11E4D299543D9001DDB02 /* ADCHubApp.swift */,
+				3DE63FA12C5808BA0049939C /* Shared.swift */,
+				3DFB59C32C536BCC0061CE6C /* UserSettings.swift */,
+				3D9826E82C5553CD00C2963B /* MatchRowView.swift */,
+				3DB21DD42B054D6400B12803 /* RootView.swift */,
+				D4E7F1D12CA4C267005886B7 /* TeamworkScoreCalculator.swift */,
+				D4E7F1CF2CA4B555005886B7 /* GameManual.swift */,
+				3DB11E4F299543D9001DDB02 /* Favorites.swift */,
+				3D3219C829D1CFF300EF5500 /* TeamEventsView.swift */,
+				3D56DC502B28B25D004DA5B9 /* TeamInfoView.swift */,
+				3D3219CA29D1EA0D00EF5500 /* EventView.swift */,
+				3D3219CC29D1EF1D00EF5500 /* EventInformation.swift */,
+				3D3219CE29D31BD500EF5500 /* EventTeams.swift */,
+				01EF2B062BB7356D00A88DCE /* EventTeamView.swift */,
+				3D3219D029D3327500EF5500 /* EventTeamMatches.swift */,
+				3D1E7F4B2AAA1643009BA258 /* MatchNotes.swift */,
+				3D1E57A929F17D3500DA6296 /* EventDivisionView.swift */,
+				3D672BDE2A46544A000211A7 /* EventDivisionAwards.swift */,
+				3D84D7792A40A6320043F8ED /* EventDivisionMatches.swift */,
+				3D01A8C229DF3D55000BBDEB /* EventDivisionRankings.swift */,
+				3D919AEE29F6F70C00E1724F /* EventSkillsRankings.swift */,
+				3D0BE6F829A3F0C700C3EA8A /* Lookup.swift */,
+			);
+			path = RoboNexus;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3D943E602AFBD247009EF365 /* MatchUpdatesExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D943E732AFBD24C009EF365 /* Build configuration list for PBXNativeTarget "MatchUpdatesExtension" */;
+			buildPhases = (
+				3D943E5D2AFBD247009EF365 /* Sources */,
+				3D943E5E2AFBD247009EF365 /* Frameworks */,
+				3D943E5F2AFBD247009EF365 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MatchUpdatesExtension;
+			packageProductDependencies = (
+				3D0583BA2AFC4CF70047A393 /* Matft */,
+			);
+			productName = MatchUpdatesExtension;
+			productReference = 3D943E612AFBD247009EF365 /* MatchUpdatesExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		3DB11E49299543D9001DDB02 /* RoboNexus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3DB11E6F299543DC001DDB02 /* Build configuration list for PBXNativeTarget "RoboNexus" */;
+			buildPhases = (
+				3DB11E47299543D9001DDB02 /* Frameworks */,
+				D4F084682CA47BF60032E72D /* Sources */,
+				3DB11E48299543D9001DDB02 /* Resources */,
+				3D1E57D329F183FD00DA6296 /* Embed Foundation Extensions */,
+				3DFB59B02C535D120061CE6C /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoboNexus;
+			packageProductDependencies = (
+				3D86DDB02A3A3ACC00826BB4 /* Matft */,
+			);
+			productName = "VRC RoboScout";
+			productReference = 3DB11E4A299543D9001DDB02 /* RoboNexus.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3DB11E5A299543DC001DDB02 /* RoboNexusTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3DB11E72299543DC001DDB02 /* Build configuration list for PBXNativeTarget "RoboNexusTests" */;
+			buildPhases = (
+				3DB11E57299543DC001DDB02 /* Sources */,
+				3DB11E58299543DC001DDB02 /* Frameworks */,
+				3DB11E59299543DC001DDB02 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3DB11E5D299543DC001DDB02 /* PBXTargetDependency */,
+			);
+			name = RoboNexusTests;
+			productName = "VRC RoboScoutTests";
+			productReference = 3DB11E5B299543DC001DDB02 /* RoboNexusTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3DB11E64299543DC001DDB02 /* RoboNexusUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3DB11E75299543DC001DDB02 /* Build configuration list for PBXNativeTarget "RoboNexusUITests" */;
+			buildPhases = (
+				3DB11E61299543DC001DDB02 /* Sources */,
+				3DB11E62299543DC001DDB02 /* Frameworks */,
+				3DB11E63299543DC001DDB02 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3DB11E67299543DC001DDB02 /* PBXTargetDependency */,
+			);
+			name = RoboNexusUITests;
+			productName = "VRC RoboScoutUITests";
+			productReference = 3DB11E65299543DC001DDB02 /* RoboNexusUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3DB11E42299543D9001DDB02 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					3D943E602AFBD247009EF365 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+					3DB11E49299543D9001DDB02 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					3DB11E5A299543DC001DDB02 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 3DB11E49299543D9001DDB02;
+					};
+					3DB11E64299543DC001DDB02 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 3DB11E49299543D9001DDB02;
+					};
+				};
+			};
+			buildConfigurationList = 3DB11E45299543D9001DDB02 /* Build configuration list for PBXProject "RoboNexus" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3DB11E41299543D9001DDB02;
+			packageReferences = (
+				3D86DDAF2A3A3ACC00826BB4 /* XCRemoteSwiftPackageReference "Matft" */,
+				3DFB59C02C5368DD0061CE6C /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
+			productRefGroup = 3DB11E4B299543D9001DDB02 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3DB11E49299543D9001DDB02 /* RoboNexus */,
+				3DB11E5A299543DC001DDB02 /* RoboNexusTests */,
+				3DB11E64299543DC001DDB02 /* RoboNexusUITests */,
+				3D943E602AFBD247009EF365 /* MatchUpdatesExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3D943E5F2AFBD247009EF365 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D943E6E2AFBD24B009EF365 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E48299543D9001DDB02 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3DAFC80E2A2640EB00A0C41A /* CoreML in Resources */,
+				3D50E10829C8915C002FE201 /* Launch Screen.storyboard in Resources */,
+				3DE63FAF2C59A59C0049939C /* Config.plist in Resources */,
+				3DB11E52299543DC001DDB02 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E59299543DC001DDB02 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E63299543DC001DDB02 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3D943E5D2AFBD247009EF365 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D943E662AFBD248009EF365 /* MatchUpdatesBundle.swift in Sources */,
+				3D943E682AFBD248009EF365 /* MatchUpdatesLiveActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E57299543DC001DDB02 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3DB11E61299543DC001DDB02 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D4F084682CA47BF60032E72D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4C6BFC82CD270B70034C350 /* ScoreCalculatorsHome.swift in Sources */,
+				D4F084AB2CA47E9E0032E72D /* WorldSkillsRankings.swift in Sources */,
+				D4F084A92CA47DEE0032E72D /* Settings.swift in Sources */,
+				D4F084A72CA47DDE0032E72D /* ADCHubAPI.swift in Sources */,
+				D4F0848D2CA47C960032E72D /* MatchUpdatesLiveActivity.swift in Sources */,
+				D4F084882CA47C360032E72D /* ADCHubData.xcdatamodeld in Sources */,
+				D4F0846A2CA47C230032E72D /* ADCHubDataController.swift in Sources */,
+				D4F0846B2CA47C230032E72D /* ADCHubActivityController.swift in Sources */,
+				D4F0846C2CA47C230032E72D /* AppDelegate.swift in Sources */,
+				D4F0846D2CA47C230032E72D /* ADCHubApp.swift in Sources */,
+				D4E7F1D22CA4C267005886B7 /* TeamworkScoreCalculator.swift in Sources */,
+				D4F0846E2CA47C230032E72D /* Shared.swift in Sources */,
+				D4F084702CA47C230032E72D /* UserSettings.swift in Sources */,
+				D4F084712CA47C230032E72D /* MatchRowView.swift in Sources */,
+				D4F084722CA47C230032E72D /* RootView.swift in Sources */,
+				D4E7F1D02CA4B555005886B7 /* GameManual.swift in Sources */,
+				D4F084732CA47C230032E72D /* Favorites.swift in Sources */,
+				D4F084742CA47C230032E72D /* TeamEventsView.swift in Sources */,
+				D4F084752CA47C230032E72D /* TeamInfoView.swift in Sources */,
+				D4F084762CA47C230032E72D /* EventView.swift in Sources */,
+				D4F084772CA47C230032E72D /* EventInformation.swift in Sources */,
+				D4F084782CA47C230032E72D /* EventTeams.swift in Sources */,
+				D4F084792CA47C230032E72D /* EventTeamView.swift in Sources */,
+				D4C6BFCA2CD273300034C350 /* AutonomousFlightSkillsCalculator.swift in Sources */,
+				D4A08B642D5A7B550088CDAC /* ConfigManger.swift in Sources */,
+				D4F0847B2CA47C230032E72D /* EventTeamMatches.swift in Sources */,
+				D4F0847C2CA47C230032E72D /* MatchNotes.swift in Sources */,
+				D4C6BFC62CD26FE90034C350 /* PilotingSkillsCalculator.swift in Sources */,
+				D4F0847D2CA47C230032E72D /* EventDivisionView.swift in Sources */,
+				D4F0847E2CA47C230032E72D /* EventDivisionAwards.swift in Sources */,
+				D4F0847F2CA47C230032E72D /* EventDivisionMatches.swift in Sources */,
+				D4C3DA7C2D03984300C6FFF9 /* StateRegionMapping.swift in Sources */,
+				D4F084802CA47C230032E72D /* EventDivisionRankings.swift in Sources */,
+				D4F084812CA47C230032E72D /* EventSkillsRankings.swift in Sources */,
+				D4F084842CA47C230032E72D /* Lookup.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3DB11E5D299543DC001DDB02 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3DB11E49299543D9001DDB02 /* RoboNexus */;
+			targetProxy = 3DB11E5C299543DC001DDB02 /* PBXContainerItemProxy */;
+		};
+		3DB11E67299543DC001DDB02 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3DB11E49299543D9001DDB02 /* RoboNexus */;
+			targetProxy = 3DB11E66299543DC001DDB02 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3D943E742AFBD24C009EF365 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LDYP2MX4AG;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MatchUpdates/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MatchUpdates;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.5.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sunkensplashstudios.VRCRoboScout.MatchUpdates;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3D943E752AFBD24C009EF365 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LDYP2MX4AG;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MatchUpdates/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MatchUpdates;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.5.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sunkensplashstudios.VRCRoboScout.MatchUpdates;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3DB11E6D299543DC001DDB02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3DB11E6E299543DC001DDB02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		3DB11E70299543DC001DDB02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-Dark AppIcon-ACE AppIcon-Delrin AppIcon-Revision AppIcon-SIGBots AppIcon-P AppIcon-Purple AppIcon-Aqua AppIcon-Blue AppIcon-Cute AppIcon-Century AppIcon-PT AppIcon-2011 AppIcon-LAUNCH AppIcon-Leopard AppIcon-Tempest AppIcon-Kauz AppIcon-Banga AppIcon-TV AppIcon-Tigris AppIcon-Lum AppIcon-KI AppIcon-RVV AppIcon-CW AppIcon-Saurus AppIcon-RSnet AppIcon-Num AppIcon-Riptide AppIcon-Straitis AppIcon-Canes AppIcon-Boogie AppIcon-Mmtm AppIcon-Balls AppIcon-Sketchy AppIcon-Siege AppIcon-Chunger AppIcon-Bull AppIcon-Circuits AppIcon-Gear AppIcon-SS AppIcon-CANs AppIcon-Ranch AppIcon-Bagel AppIcon-Autumn AppIcon-Canada AppIcon-UK AppIcon-India AppIcon-LL AppIcon-WW AppIcon-GS";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "adc-hub";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 92S72MX2PG;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ADC-Hub-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = RoboNexus;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.robonexus;
+				PRODUCT_NAME = RoboNexus;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TVOS_DEPLOYMENT_TARGET = 17.5;
+			};
+			name = Debug;
+		};
+		3DB11E71299543DC001DDB02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-Dark AppIcon-ACE AppIcon-Delrin AppIcon-Revision AppIcon-SIGBots AppIcon-P AppIcon-Purple AppIcon-Aqua AppIcon-Blue AppIcon-Cute AppIcon-Century AppIcon-PT AppIcon-2011 AppIcon-LAUNCH AppIcon-Leopard AppIcon-Tempest AppIcon-Kauz AppIcon-Banga AppIcon-TV AppIcon-Tigris AppIcon-Lum AppIcon-KI AppIcon-RVV AppIcon-CW AppIcon-Saurus AppIcon-RSnet AppIcon-Num AppIcon-Riptide AppIcon-Straitis AppIcon-Canes AppIcon-Boogie AppIcon-Mmtm AppIcon-Balls AppIcon-Sketchy AppIcon-Siege AppIcon-Chunger AppIcon-Bull AppIcon-Circuits AppIcon-Gear AppIcon-SS AppIcon-CANs AppIcon-Ranch AppIcon-Bagel AppIcon-Autumn AppIcon-Canada AppIcon-UK AppIcon-India AppIcon-LL AppIcon-WW AppIcon-GS";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "adc-hub";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 92S72MX2PG;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ADC-Hub-Info.plist";
+				"INFOPLIST_FILE[sdk=*]" = "ADC-Hub-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = RoboNexus;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.robonexus;
+				PRODUCT_NAME = RoboNexus;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TVOS_DEPLOYMENT_TARGET = 17.5;
+			};
+			name = Release;
+		};
+		3DB11E73299543DC001DDB02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = LDYP2MX4AG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sunkensplashstudios.VRC-RoboScoutTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RoboNexus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RoboNexus";
+			};
+			name = Debug;
+		};
+		3DB11E74299543DC001DDB02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = LDYP2MX4AG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sunkensplashstudios.VRC-RoboScoutTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RoboNexus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RoboNexus";
+			};
+			name = Release;
+		};
+		3DB11E76299543DC001DDB02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = LDYP2MX4AG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sunkensplashstudios.VRC-RoboScoutUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "VRC RoboScout";
+			};
+			name = Debug;
+		};
+		3DB11E77299543DC001DDB02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = LDYP2MX4AG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sunkensplashstudios.VRC-RoboScoutUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "VRC RoboScout";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3D943E732AFBD24C009EF365 /* Build configuration list for PBXNativeTarget "MatchUpdatesExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D943E742AFBD24C009EF365 /* Debug */,
+				3D943E752AFBD24C009EF365 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3DB11E45299543D9001DDB02 /* Build configuration list for PBXProject "RoboNexus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3DB11E6D299543DC001DDB02 /* Debug */,
+				3DB11E6E299543DC001DDB02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3DB11E6F299543DC001DDB02 /* Build configuration list for PBXNativeTarget "RoboNexus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3DB11E70299543DC001DDB02 /* Debug */,
+				3DB11E71299543DC001DDB02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3DB11E72299543DC001DDB02 /* Build configuration list for PBXNativeTarget "RoboNexusTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3DB11E73299543DC001DDB02 /* Debug */,
+				3DB11E74299543DC001DDB02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3DB11E75299543DC001DDB02 /* Build configuration list for PBXNativeTarget "RoboNexusUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3DB11E76299543DC001DDB02 /* Debug */,
+				3DB11E77299543DC001DDB02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3D86DDAF2A3A3ACC00826BB4 /* XCRemoteSwiftPackageReference "Matft" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SunkenSplash/Matft";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		3DFB59C02C5368DD0061CE6C /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3D0583BA2AFC4CF70047A393 /* Matft */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3D86DDAF2A3A3ACC00826BB4 /* XCRemoteSwiftPackageReference "Matft" */;
+			productName = Matft;
+		};
+		3D86DDB02A3A3ACC00826BB4 /* Matft */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3D86DDAF2A3A3ACC00826BB4 /* XCRemoteSwiftPackageReference "Matft" */;
+			productName = Matft;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		3D1E7F4D2AAA2B4F009BA258 /* ADCHubData.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3D1E7F4E2AAA2B4F009BA258 /* ADCHubData.xcdatamodel */,
+			);
+			currentVersion = 3D1E7F4E2AAA2B4F009BA258 /* ADCHubData.xcdatamodel */;
+			path = ADCHubData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 3DB11E42299543D9001DDB02 /* Project object */;
+}
