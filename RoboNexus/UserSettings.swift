@@ -61,6 +61,8 @@ class UserSettings: ObservableObject {
     private var team_info_default_page: String
     private var match_team_default_page: String
     private var selected_season_id: Int
+    // Mark dateFilter as @Published so UI updates when it changes.
+    @Published private var dateFilter: Int
     
     // ==============================
     // NEW: Program Selection
@@ -78,7 +80,7 @@ class UserSettings: ObservableObject {
         self.topBarColorString = defaults.object(forKey: "topBarColor") as? String
             ?? UIColor.StringFromUIColor(color: getGreen())
         
-        let storedMinimalistic = defaults.object(forKey: "minimalistic") as? Int ?? 1
+        let storedMinimalistic = defaults.object(forKey: "minimalistic") as? Int ?? 0
         self.minimalistic = storedMinimalistic == 1
         
         self.topBarContentColorString = defaults.object(forKey: "topBarContentColor") as? String
@@ -98,6 +100,8 @@ class UserSettings: ObservableObject {
         
         // NEW: Read haptics toggle from UserDefaults.
         self.enableHaptics = defaults.bool(forKey: "enableHaptics")
+        // Updated dateFilter is now published.
+        self.dateFilter = defaults.object(forKey: "dateFilter") as? Int ?? -7
     }
     
     func readUserDefaults() {
@@ -107,7 +111,7 @@ class UserSettings: ObservableObject {
         self.topBarColorString = defaults.object(forKey: "topBarColor") as? String
             ?? UIColor.StringFromUIColor(color: getGreen())
         
-        let storedMinimalistic = defaults.object(forKey: "minimalistic") as? Int ?? 1
+        let storedMinimalistic = defaults.object(forKey: "minimalistic") as? Int ?? 0
         self.minimalistic = storedMinimalistic == 1
         
         self.topBarContentColorString = defaults.object(forKey: "topBarContentColor") as? String
@@ -124,6 +128,7 @@ class UserSettings: ObservableObject {
         
         // NEW: Re-read haptics setting.
         self.enableHaptics = defaults.bool(forKey: "enableHaptics")
+        self.dateFilter = defaults.integer(forKey: "dateFilter")
     }
     
     func updateUserDefaults(updateTopBarContentColor: Bool = false) {
@@ -152,9 +157,14 @@ class UserSettings: ObservableObject {
         
         // NEW: Persist haptics setting.
         defaults.set(self.enableHaptics, forKey: "enableHaptics")
+        defaults.set(self.dateFilter, forKey: "dateFilter")
     }
     
     // MARK: - Setters
+    func setDateFilter(dateFilter: Int) {
+        self.dateFilter = dateFilter
+        updateUserDefaults()  // Persist the change
+    }
     
     func setButtonColor(color: SwiftUI.Color) {
         self.buttonColorString = UIColor.StringFromUIColor(color: UIColor(color))
@@ -234,6 +244,10 @@ class UserSettings: ObservableObject {
         }
     }
     
+    func getDateFilter() -> Int {
+        return self.dateFilter
+    }
+    
     // MARK: - Static Getters
     
     static func getRobotEventsAPIKey() -> String? {
@@ -254,7 +268,11 @@ class UserSettings: ObservableObject {
     }
     
     static func getMinimalistic() -> Bool {
-        return defaults.object(forKey: "minimalistic") as? Int ?? 1 == 1
+        return defaults.object(forKey: "minimalistic") as? Int ?? 0 == 1
+    }
+    
+    static func getDateFilter() -> Int {
+        return defaults.object(forKey: "dateFilter") as? Int ?? -7
     }
     
     static func getGradeLevel() -> String {

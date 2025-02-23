@@ -88,8 +88,8 @@ struct Lookup: View {
             } else if lookup_type == 1 {
                 // Events lookup view
                 EventLookup()
-                    .environmentObject(favorites)
                     .environmentObject(settings)
+                    .environmentObject(favorites)
                     .environmentObject(dataController)
             }
         }
@@ -125,6 +125,14 @@ struct TeamLookup: View {
         self._fetch = State(initialValue: fetch)
     }
     
+    // Function to hide the keyboard (iOS only)
+    func hideKeyboard() {
+        #if canImport(UIKit)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
+        #endif
+    }
+    
     func fetch_info(number: String) {
         hideKeyboard()
         showLoading = true
@@ -144,11 +152,6 @@ struct TeamLookup: View {
             
             // NOTE: We now check the new program-based favorites approach
             let is_favorited = favorites.favoriteTeams.contains(fetched_team.number)
-            
-           
-
-            
-                
             
             DispatchQueue.main.async {
                 team = fetched_team
@@ -364,17 +367,35 @@ struct TeamLookup: View {
     }
 }
 
-// MARK: - EventLookup & EventSearch (unchanged)
+// MARK: - EventLookup & EventSearch
 
 struct EventLookup: View {
     
+    // Use the environment settings here so that the rest of your app remains consistent.
     @EnvironmentObject var settings: UserSettings
     @EnvironmentObject var favorites: FavoriteStorage
     @EnvironmentObject var dataController: ADCHubDataController
     
-    @StateObject private var eventSearch = EventSearch()
+    // We remove the duplicate newsettings and use onAppear to update eventSearch.settings.
+    @StateObject private var eventSearch: EventSearch = EventSearch(settings: UserSettings())
     @State private var selected_season: Int = API.selected_season_id()
     
+    init() {
+        // Since environment objects are not available in init, we initialize with a temporary settings.
+        // We will update eventSearch.settings in .onAppear.
+        _eventSearch = StateObject(wrappedValue: EventSearch(settings: UserSettings()))
+    }
+    
+    func clearFilters(){
+        eventSearch.name_query = ""
+        eventSearch.region_query = ""
+        eventSearch.state_query = ""
+        eventSearch.level_query = ""
+        eventSearch.isDateFilterActive = true
+        selected_season = API.selected_season_id()
+        eventSearch.fetch_events(season_query: selected_season)
+    }
+                                 
     var body: some View {
         NavigationView {
             VStack {
@@ -392,6 +413,16 @@ struct EventLookup: View {
                             Button(action: {
                                 selected_season = season_id
                                 eventSearch.fetch_events(season_query: selected_season)
+                                if selected_season != API.get_current_season_id(){
+                                    eventSearch.isDateFilterActive = false
+                                    print("Date Filter disabled")
+                                } else if selected_season == API.get_current_season_id(){
+                                    eventSearch.isDateFilterActive = true
+                                    print("Date Filter enabled")
+                                } else {
+                                    eventSearch.isDateFilterActive = eventSearch.isDateFilterActive
+                                    print("Date Filter not touched")
+                                }
                             }) {
                                 Text(format_season_option(raw: API.season_id_map[0][season_id] ?? "Unknown"))
                             }
@@ -481,8 +512,16 @@ struct EventLookup: View {
                 }
             }
             .onAppear {
-                self.selected_season = eventSearch.selected_season
-                eventSearch.fetch_events(season_query: selected_season)
+                // Update eventSearch.settings with the environment's settings
+                eventSearch.settings = settings
+                clearFilters()
+                if selected_season != API.get_current_season_id(){
+                    eventSearch.isDateFilterActive = false
+                    print("Date Filter disabled")
+                } else {
+                    eventSearch.isDateFilterActive = eventSearch.isDateFilterActive
+                    print("Date Filter not touched")
+                }
             }
         }
     }
@@ -496,7 +535,12 @@ struct EventLookup: View {
     }
 }
 
+// MARK: - Modified EventSearch Class
+
 class EventSearch: ObservableObject {
+    // NEW: Use a normal stored property for settings (not an @EnvironmentObject) so we can assign it.
+    var settings: UserSettings
+    
     @Published var event_indexes: [String] = []
     @Published var all_events: [Event] = []
     @Published var filtered_events: [Event] = []
@@ -514,7 +558,9 @@ class EventSearch: ObservableObject {
     private var current_season_id: Int = API.get_current_season_id()
     private var cancellables = Set<AnyCancellable>()
     
-    init(season_query: Int? = nil) {
+    // Modified initializer that accepts a UserSettings instance.
+    init(settings: UserSettings, season_query: Int? = nil) {
+        self.settings = settings
         self.selected_season = season_query ?? API.selected_season_id()
         fetch_events(season_query: self.selected_season)
         setupSubscribers()
@@ -550,10 +596,17 @@ class EventSearch: ObservableObject {
         
         isLoading = true
         
-        DispatchQueue.global(qos: .userInteractive).async {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let self = self else { return }
             var params: [String: Any] = ["per_page": 250]
             if self.isDateFilterActive == true {
-                let defaultStartDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+                // Use the getDateFilter() function from our settings instance.
+                let defaultStartDate = Calendar.current.date(
+                    byAdding: .day,
+                    value: self.settings.getDateFilter(),
+                    to: Date()
+                ) ?? Date()
+                
                 let dateFormatter = ISO8601DateFormatter()
                 dateFormatter.formatOptions = [.withInternetDateTime]
                 let startDateString = dateFormatter.string(from: defaultStartDate)

@@ -31,7 +31,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3DB11E49299543D9001DDB02"
-               BuildableName = "RECF_Hub.app"
+               BuildableName = "RoboNexus.app"
                BlueprintName = "RoboNexus"
                ReferencedContainer = "container:RoboNexus.xcodeproj">
             </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3DB11E49299543D9001DDB02"
-            BuildableName = "RECF_Hub.app"
+            BuildableName = "RoboNexus.app"
             BlueprintName = "RoboNexus"
             ReferencedContainer = "container:RoboNexus.xcodeproj">
          </BuildableReference>
@@ -98,7 +98,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3DB11E49299543D9001DDB02"
-            BuildableName = "RECF_Hub.app"
+            BuildableName = "RoboNexus.app"
             BlueprintName = "RoboNexus"
             ReferencedContainer = "container:RoboNexus.xcodeproj">
          </BuildableReference>

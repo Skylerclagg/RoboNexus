@@ -12,11 +12,13 @@
 import os
 import SwiftUI
 
+// Instantiate the API and other global controllers.
 let API = ADCHubAPI()
 let activities = ADCHubActivityController()
 
 #if canImport(UIKit)
 extension View {
+    /// Dismisses the keyboard.
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
@@ -145,11 +147,21 @@ struct ImportingData: View {
 struct ADCHub: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
+    // Create our environment objects as StateObjects.
     @StateObject var favorites = FavoriteStorage()
-    @StateObject var settings = UserSettings()
+    @StateObject var settings: UserSettings
     @StateObject var dataController = ADCHubDataController()
-    // NEW: Create a ConfigManager instance and inject it into the environment.
     @StateObject var configManager = ConfigManager()
+    @StateObject var eventSearch: EventSearch
+    
+    // Custom initializer to create a single instance of UserSettings,
+    // and pass that instance to EventSearch.
+    init() {
+        let settingsInstance = UserSettings()
+        _settings = StateObject(wrappedValue: settingsInstance)
+        _eventSearch = StateObject(wrappedValue: EventSearch(settings: settingsInstance))
+    }
     
     var body: some Scene {
         WindowGroup {
@@ -157,7 +169,7 @@ struct ADCHub: App {
                 .environmentObject(favorites)
                 .environmentObject(settings)
                 .environmentObject(dataController)
-                .environmentObject(EventSearch())
+                .environmentObject(eventSearch)
                 .environmentObject(configManager)  // Inject the ConfigManager
                 .tint(settings.buttonColor())
                 .onAppear {
@@ -166,18 +178,16 @@ struct ADCHub: App {
                     #else
                     print("Release configuration")
                     #endif
-                    if Bundle.main.path(forResource: "Config", ofType: "plist") == nil {
-                        let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Production")
-                        logger.warning("Production API keys inaccessible!")
-                    }
+                    
+                    // Set the active season and update defaults.
                     let activeSeason = API.get_current_season_id()
                     settings.setSelectedSeasonID(id: activeSeason)
-                                        settings.updateUserDefaults()
+                    settings.updateUserDefaults()
                     
+                    // Asynchronously generate the season map and populate caches.
                     DispatchQueue.global(qos: .userInteractive).async {
                         API.generate_season_id_map()
                         API.populate_all_world_skills_caches()
-                        
                     }
                 }
         }

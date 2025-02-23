@@ -22,7 +22,6 @@ struct Settings: View {
     @EnvironmentObject var configManager: ConfigManager
     @EnvironmentObject var eventSearch: EventSearch
 
-    
     // State variables for appearance and season.
     @State var selected_button_color = UserSettings().buttonColor()
     @State var selected_top_bar_color = UserSettings().topBarColor()
@@ -89,7 +88,7 @@ struct Settings: View {
                             self.selected_season_id = activeSeason
                             settings.setSelectedSeasonID(id: activeSeason)
                             API.setSelectedSeasonID(id: activeSeason)
-                            print("the selected season Id in the API is: ",API.selected_season_id())
+                            print("the selected season Id in the API is: ", API.selected_season_id())
                             settings.updateUserDefaults(updateTopBarContentColor: false)
                             self.eventSearch.fetch_events(season_query: activeSeason)
                         }
@@ -142,7 +141,20 @@ struct Settings: View {
                         Spacer()
                     }
                 }
-                
+                // MARK: - General Settings
+                Section("General") {
+                    Toggle("Enable Haptics", isOn: $settings.enableHaptics)
+                        .onChange(of: settings.enableHaptics) { _ in
+                            settings.updateUserDefaults()
+                        }
+                    // Fixed Stepper binding: we now return the positive value for display.
+                    Stepper(value: Binding(
+                        get: { -settings.getDateFilter() },
+                        set: { settings.setDateFilter(dateFilter: -$0) }
+                    ), in: 1...30) {
+                        Text("Date Filter: \(-settings.getDateFilter()) days ago")
+                    }
+                }
                 // MARK: - Appearance Section
                 Section("Appearance") {
                     ColorPicker("Top Bar Color", selection: $selected_top_bar_color, supportsOpacity: false)
@@ -178,14 +190,6 @@ struct Settings: View {
                             }
                         }
                     }
-                }
-                
-                // MARK: - Haptics Section
-                Section("Haptics") {
-                    Toggle("Enable Haptics", isOn: $settings.enableHaptics)
-                        .onChange(of: settings.enableHaptics) { _ in
-                            settings.updateUserDefaults()
-                        }
                 }
                 
                 // MARK: - Danger Section
@@ -245,7 +249,14 @@ struct Settings: View {
                     }
                 }
                 
-                Section("Developed by Skyler Clagg, Note this app is NOT an OFFICIAL RECF App. Based on Teams Ace 229V and Jelly 2733J's VRC Roboscout") {}
+                Section {
+                    // You can leave the section content empty if you only need a header.
+                } header: {
+                    // Combine Text views so that only the middle part is red.
+                    Text("Developed by Skyler Clagg, ")
+                    + Text("Note this app is NOT an OFFICIAL RECF App.").foregroundColor(.red)
+                    + Text(" Based on Teams Ace 229V and Jelly 2733J's VRC Roboscout")
+                }
             }
             Link("Join the Discord Server", destination: URL(string: "https://discord.gg/KzaUshqfsZ")!).padding()
         }
