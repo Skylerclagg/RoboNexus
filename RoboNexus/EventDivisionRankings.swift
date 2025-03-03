@@ -21,9 +21,8 @@ class EventDivisionRankingsList: ObservableObject {
     
     func sort_by(option: Int, event: Event, division: Division) {
         // For now, we only support a "rank" sort (option == 0).
-        // If you have more advanced sorting, add it here.
         if option == 0 {
-            // Just create an array of indexes in ascending order
+            // Create an array of indexes in ascending order.
             self.rankings_indexes = Array(0 ..< (event.rankings[division]?.count ?? 0))
         }
     }
@@ -42,7 +41,6 @@ struct EventDivisionRankings: View {
     
     @State var event_rankings_list: EventDivisionRankingsList
     @State var showLoading = true
-    @State var showingSheet = false
     @State var sortingOption = 0
     @State var teamNumberQuery = ""
     
@@ -98,6 +96,13 @@ struct EventDivisionRankings: View {
         .onAppear {
             navigation_bar_manager.title = "\(division.name) Rankings"
         }
+        .onReceive(navigation_bar_manager.$shouldReload) { shouldReload in
+            if shouldReload {
+                showLoading = true
+                fetch_rankings()
+                navigation_bar_manager.shouldReload = false
+            }
+        }
     }
     
     // MARK: - ADC or IQ View (Only AVG Points)
@@ -119,6 +124,7 @@ struct EventDivisionRankings: View {
                     .padding([.top, .leading, .trailing], 10)
                     .onChange(of: sortingOption) { option in
                         self.event_rankings_list.sort_by(option: option, event: self.event, division: self.division)
+                        // A simple toggle to force a refresh of the UI.
                         self.showLoading.toggle()
                         self.showLoading.toggle()
                     }
@@ -131,31 +137,28 @@ struct EventDivisionRankings: View {
                         sel.selectionChanged()
                     }
                     
-                    // Rankings List
-                    NavigationView {
-                        List {
-                            ForEach(searchResults, id: \.self) { rankIndex in
-                                let ranking = team_ranking(rank: rankIndex)
-                                let teamID = String(ranking.team.id)
-                                let mappedNumber = teams_map[teamID] ?? ""
-                                
-                                NavigationLink(
-                                    destination: EventTeamMatches(
-                                        teams_map: $teams_map,
-                                        event: self.event,
-                                        team: Team(id: ranking.team.id, fetch: false),
-                                        division: self.division
-                                    )
-                                    .environmentObject(settings)
-                                    .environmentObject(dataController)
-                                ) {
-                                    TeamRankingRow(ranking: ranking, mappedNumber: mappedNumber, event: event, showAdditionalStats: false)
-                                        .environmentObject(favorites)
-                                }
+                    // Rankings List without an inner NavigationView.
+                    List {
+                        ForEach(searchResults, id: \.self) { rankIndex in
+                            let ranking = team_ranking(rank: rankIndex)
+                            let teamID = String(ranking.team.id)
+                            let mappedNumber = teams_map[teamID] ?? ""
+                            
+                            NavigationLink(
+                                destination: EventTeamMatches(
+                                    teams_map: .constant(teams_map),
+                                    event: self.event,
+                                    team: Team(id: ranking.team.id, fetch: false),
+                                    division: self.division
+                                )
+                                .environmentObject(settings)
+                                .environmentObject(dataController)
+                            ) {
+                                TeamRankingRow(ranking: ranking, mappedNumber: mappedNumber, event: event, showAdditionalStats: false)
+                                    .environmentObject(favorites)
                             }
                         }
                     }
-                    .navigationViewStyle(StackNavigationViewStyle())
                     .searchable(text: $teamNumberQuery, prompt: "Enter a team number...")
                     .tint(settings.topBarContentColor())
                 }
@@ -181,20 +184,19 @@ struct EventDivisionRankings: View {
                             
                             NavigationLink(
                                 destination: EventTeamMatches(
-                                    teams_map: $teams_map,
+                                    teams_map: .constant(teams_map),
                                     event: self.event,
                                     team: Team(id: ranking.team.id, fetch: false),
                                     division: self.division
                                 )
                                 .environmentObject(settings)
                                 .environmentObject(dataController)
-                            ){
+                            ) {
                                 TeamRankingRow(ranking: ranking, mappedNumber: mappedNumber, event: event, showAdditionalStats: true)
                                     .environmentObject(favorites)
                             }
                         }
                     }
-                    .navigationViewStyle(StackNavigationViewStyle())
                     .searchable(text: $teamNumberQuery, prompt: "Enter a team number...")
                     .tint(settings.topBarContentColor())
                 }

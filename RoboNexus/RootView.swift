@@ -23,7 +23,7 @@ struct RootView: View {
     @EnvironmentObject var settings: UserSettings
     @EnvironmentObject var favorites: FavoriteStorage
     @EnvironmentObject var dataController: ADCHubDataController
-    @EnvironmentObject var configManager: ConfigManager  // So we have access to current program if needed
+    @EnvironmentObject var configManager: ConfigManager  // Access to current program if needed
 
     @StateObject var navigation_bar_manager = NavigationBarManager(title: "Favorites")
     
@@ -93,7 +93,7 @@ struct RootView: View {
                         .tag(4)
                 }
             }
-            // Environment objects injected into child views
+            // Inject environment objects into child views.
             .environmentObject(favorites)
             .environmentObject(settings)
             .environmentObject(dataController)
@@ -115,7 +115,7 @@ struct RootView: View {
                             .foregroundColor(settings.topBarContentColor())
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
                     NavigationLink(destination:
                         Settings()
                             .environmentObject(favorites)
@@ -127,11 +127,8 @@ struct RootView: View {
                     ) {
                         Image(systemName: "gearshape")
                     }
-                }
-                
-                // If the user is on the Game Manual screen, show a refresh button
-                if navigation_bar_manager.title.contains("Game Manual") {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    // Show refresh button when the title indicates a refreshable view.
+                    if navigation_bar_manager.title.contains("Game Manual") {
                         Button(action: {
                             navigation_bar_manager.shouldReload = true
                         }) {
@@ -141,7 +138,7 @@ struct RootView: View {
                         .accessibilityLabel("Refresh")
                     }
                 }
-                // If the user is on the World Skills screen, show a link
+                // If on World Skills screen, show a link.
                 if navigation_bar_manager.title.contains("Skills") {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Link(destination: URL(string: "https://www.robotevents.com/robot-competitions/adc/standings/skills")!) {

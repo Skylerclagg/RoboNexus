@@ -169,32 +169,42 @@ struct TeamLookup: View {
     
     var worldSkillsData: (worldSkills: WorldSkills, teamsCount: Int) {
         let prog = settings.selectedProgram
-        var cache: WorldSkillsCache
         switch prog {
         case "VEX IQ Robotics Competition":
-            cache = (team.grade == "Elementary")
-                ? API.viqrc_elementary_school_skills_cache
-                : API.viqrc_middle_school_skills_cache
+            if let skills = API.viqrc_elementary_school_skills_cache.teams.first(where: { $0.team.id == team.id }) {
+                return (skills, API.viqrc_elementary_school_skills_cache.teams.count)
+            } else if let skills = API.viqrc_middle_school_skills_cache.teams.first(where: { $0.team.id == team.id }) {
+                return (skills, API.viqrc_middle_school_skills_cache.teams.count)
+            } else {
+                return (WorldSkills(team: team), 0)
+            }
         case "VEX V5 Robotics Competition":
-            cache = (team.grade == "Middle School")
-                ? API.v5rc_middle_school_skills_cache
-                : API.v5rc_high_school_skills_cache
+            if let skills = API.v5rc_middle_school_skills_cache.teams.first(where: { $0.team.id == team.id }) {
+                return (skills, API.v5rc_middle_school_skills_cache.teams.count)
+            } else if let skills = API.v5rc_high_school_skills_cache.teams.first(where: { $0.team.id == team.id }) {
+                return (skills, API.v5rc_high_school_skills_cache.teams.count)
+            } else {
+                return (WorldSkills(team: team), 0)
+            }
         case "VEX U Robotics Competition":
-            cache = API.vurc_skills_cache
+            if let skills = API.vurc_skills_cache.teams.first(where: { $0.team.id == team.id }) {
+                return (skills, API.vurc_skills_cache.teams.count)
+            } else {
+                return (WorldSkills(team: team), 0)
+            }
         case "ADC", "Aerial Drone Competition":
             fallthrough
         default:
-            cache = (team.grade == "Middle School")
-                ? API.adc_middle_school_skills_cache
-                : API.adc_high_school_skills_cache
-        }
-        
-        if let skills = cache.teams.first(where: { $0.team.id == team.id }) {
-            return (skills, cache.teams.count)
-        } else {
-            return (WorldSkills(team: team), 0)
+            if let skills = API.adc_middle_school_skills_cache.teams.first(where: { $0.team.id == team.id }) {
+                return (skills, API.adc_middle_school_skills_cache.teams.count)
+            } else if let skills = API.adc_high_school_skills_cache.teams.first(where: { $0.team.id == team.id }) {
+                return (skills, API.adc_high_school_skills_cache.teams.count)
+            } else {
+                return (WorldSkills(team: team), 0)
+            }
         }
     }
+
     
     var teamPageURL: URL? {
         let prog = settings.selectedProgram
@@ -408,109 +418,124 @@ struct EventLookup: View {
                     }
                 
                 Menu("Filters") {
-                    Menu("Select Season") {
-                        ForEach(API.season_id_map[0].keys.sorted().reversed(), id: \.self) { season_id in
-                            Button(action: {
-                                selected_season = season_id
-                                eventSearch.fetch_events(season_query: selected_season)
-                                if selected_season != API.get_current_season_id(){
-                                    eventSearch.isDateFilterActive = false
-                                    print("Date Filter disabled")
-                                } else if selected_season == API.get_current_season_id(){
-                                    eventSearch.isDateFilterActive = true
-                                    print("Date Filter enabled")
-                                } else {
-                                    eventSearch.isDateFilterActive = eventSearch.isDateFilterActive
-                                    print("Date Filter not touched")
+                                    // Season selection remains unchanged.
+                                    Menu("Select Season") {
+                                        ForEach(API.season_id_map[0].keys.sorted().reversed(), id: \.self) { season_id in
+                                            Button(action: {
+                                                selected_season = season_id
+                                                eventSearch.fetch_events(season_query: selected_season)
+                                                if selected_season != API.get_current_season_id(){
+                                                    eventSearch.isDateFilterActive = false
+                                                    print("Date Filter disabled")
+                                                } else if selected_season == API.get_current_season_id(){
+                                                    eventSearch.isDateFilterActive = true
+                                                    print("Date Filter enabled")
+                                                } else {
+                                                    print("Date Filter not touched")
+                                                }
+                                            }) {
+                                                Text(format_season_option(raw: API.season_id_map[0][season_id] ?? "Unknown"))
+                                            }
+                                        }
+                                    }
+                                    .font(.system(size: 20))
+                                    .padding()
+                                    
+                                    // Level selection remains unchanged.
+                                    Menu("Select Level") {
+                                        Button("All") {
+                                            eventSearch.level_query = ""
+                                            eventSearch.filter_events()
+                                        }
+                                        Button("Regional") {
+                                            eventSearch.level_query = "regional"
+                                            eventSearch.filter_events()
+                                        }
+                                    }
+                                    
+                                    // For ADC (or Aerial Drone), show separate Region and State menus.
+                                    if settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition" {
+                                        Menu("Select Region") {
+                                            Button("All Regions") {
+                                                eventSearch.region_query = ""
+                                                eventSearch.filter_events()
+                                            }
+                                            ForEach(eventSearch.regions_map, id: \.self) { region_name in
+                                                Button(action: {
+                                                    eventSearch.region_query = region_name
+                                                    eventSearch.filter_events()
+                                                }) {
+                                                    Text(region_name)
+                                                }
+                                            }
+                                        }
+                                        Menu("Select State") {
+                                            Button("All States") {
+                                                eventSearch.state_query = ""
+                                                eventSearch.filter_events()
+                                            }
+                                            ForEach(eventSearch.states_map, id: \.self) { state_name in
+                                                Button(action: {
+                                                    eventSearch.state_query = state_name
+                                                    eventSearch.filter_events()
+                                                }) {
+                                                    Text(state_name)
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        // For non-ADC programs, show only one "Select Region" menu,
+                                        // and include only the regions derived from the API (stored in states_map).
+                                        Menu("Select Region") {
+                                            Button("All Regions") {
+                                                eventSearch.region_query = ""
+                                                eventSearch.filter_events()
+                                            }
+                                            ForEach(eventSearch.states_map, id: \.self) { regionName in
+                                                Button(action: {
+                                                    eventSearch.region_query = regionName
+                                                    eventSearch.filter_events()
+                                                }) {
+                                                    Text(regionName)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Date filter toggle and clear filters remain unchanged.
+                                    Button(action: {
+                                        eventSearch.isDateFilterActive.toggle()
+                                    }) {
+                                        Text(eventSearch.isDateFilterActive ? "Remove Date Filter" : "Add Date Filter")
+                                    }
+                                    
+                                    Button("Clear Filters") {
+                                        clearFilters()
+                                    }
                                 }
-                            }) {
-                                Text(format_season_option(raw: API.season_id_map[0][season_id] ?? "Unknown"))
+                                .font(.system(size: 20))
+                                .padding()
+                                
+                                if eventSearch.isLoading {
+                                    VStack {
+                                        Spacer()
+                                        ProgressView("Loading events...")
+                                            .progressViewStyle(CircularProgressViewStyle())
+                                            .font(.headline)
+                                        Spacer()
+                                    }
+                                } else {
+                                    List(eventSearch.event_indexes, id: \.self) { event_index in
+                                        if let index = Int(event_index), index < eventSearch.filtered_events.count {
+                                            EventRow(event: eventSearch.filtered_events[index])
+                                                .environmentObject(dataController)
+                                        } else {
+                                            Text("Invalid Event")
+                                                .foregroundColor(.red)
+                                        }
+                                    }
+                                }
                             }
-                        }
-                    }
-                    .font(.system(size: 20))
-                    .padding()
-                    
-                    Menu("Select Level") {
-                        Button("All") {
-                            eventSearch.level_query = ""
-                            eventSearch.filter_events()
-                        }
-                        Button("Regional") {
-                            eventSearch.level_query = "regional"
-                            eventSearch.filter_events()
-                        }
-                    }
-                    
-                    Menu("Select Region") {
-                        Button("All Regions") {
-                            eventSearch.region_query = ""
-                            eventSearch.filter_events()
-                        }
-                        ForEach(eventSearch.regions_map, id: \.self) { region_name in
-                            Button(action: {
-                                eventSearch.region_query = region_name
-                                eventSearch.filter_events()
-                            }) {
-                                Text(region_name)
-                            }
-                        }
-                    }
-                    
-                    Menu("Select State") {
-                        Button("All States") {
-                            eventSearch.state_query = ""
-                            eventSearch.filter_events()
-                        }
-                        ForEach(eventSearch.states_map, id: \.self) { state_name in
-                            Button(action: {
-                                eventSearch.state_query = state_name
-                                eventSearch.filter_events()
-                            }) {
-                                Text(state_name)
-                            }
-                        }
-                    }
-                    
-                    Button(action: {
-                        eventSearch.isDateFilterActive.toggle()
-                    }) {
-                        Text(eventSearch.isDateFilterActive ? "Remove Date Filter" : "Add Date Filter")
-                    }
-                    
-                    Button("Clear Filters") {
-                        eventSearch.name_query = ""
-                        eventSearch.region_query = ""
-                        eventSearch.state_query = ""
-                        eventSearch.level_query = ""
-                        eventSearch.isDateFilterActive = true
-                        selected_season = API.selected_season_id()
-                        eventSearch.fetch_events(season_query: selected_season)
-                    }
-                }
-                .font(.system(size: 20))
-                .padding()
-                
-                if eventSearch.isLoading {
-                    VStack {
-                        Spacer()
-                        ProgressView("Loading events...")
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .font(.headline)
-                        Spacer()
-                    }
-                } else {
-                    List(eventSearch.event_indexes, id: \.self) { event_index in
-                        if let index = Int(event_index), index < eventSearch.filtered_events.count {
-                            EventRow(event: eventSearch.filtered_events[index])
-                                .environmentObject(dataController)
-                        } else {
-                            Text("Invalid Event")
-                                .foregroundColor(.red)
-                        }
-                    }
-                }
-            }
             .onAppear {
                 // Update eventSearch.settings with the environment's settings
                 eventSearch.settings = settings

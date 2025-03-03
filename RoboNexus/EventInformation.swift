@@ -26,14 +26,13 @@ struct EventInformation: View {
         dateFormatter.dateFormat = "yyyy-MM-dd"
     }
     
+    // eventRegion uses a mapping if needed.
     var eventRegion: String {
-            let state = event.region.trimmingCharacters(in: .whitespacesAndNewlines)
-            let formattedState = state.capitalized
-            
-            let normalizedState = StateRegionMapping.stateNameVariations[formattedState] ?? formattedState
-       
-            return StateRegionMapping.stateToRegionMap[normalizedState] ?? "Unknown Region"
-        }
+        let state = event.region.trimmingCharacters(in: .whitespacesAndNewlines)
+        let formattedState = state.capitalized
+        let normalizedState = StateRegionMapping.stateNameVariations[formattedState] ?? formattedState
+        return StateRegionMapping.stateToRegionMap[normalizedState] ?? "Unknown Region"
+    }
         
     var body: some View {
         VStack {
@@ -85,16 +84,27 @@ struct EventInformation: View {
                         Spacer()
                         Text(event.city)
                     }
-                    HStack {
-                        Text("State")
-                        Spacer()
-                        Text(event.region)
+                    
+                    // Conditionally show State and Region rows:
+                    if settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition" {
+                        HStack {
+                            Text("State")
+                            Spacer()
+                            Text(event.region)
+                        }
+                        HStack {
+                            Text("Region")
+                            Spacer()
+                            Text(eventRegion)
+                        }
+                    } else {
+                        HStack {
+                            Text("Region")
+                            Spacer()
+                            Text(event.region)
+                        }
                     }
-                    HStack{
-                        Text("Region")
-                        Spacer()
-                        Text(eventRegion)
-                    }
+                    
                     HStack {
                         Text("Country")
                         Spacer()

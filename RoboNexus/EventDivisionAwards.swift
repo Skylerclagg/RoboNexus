@@ -11,6 +11,9 @@
 
 import SwiftUI
 
+private let eligibilityFeaturesEnabled: Bool = false
+
+
 // MARK: - Ineligibility Reasons Detail View
 struct ADCIneligibilityReasonsView: View {
     let team: Team
@@ -752,7 +755,8 @@ struct EventDivisionAwards: View {
                                         }
                                     }
                                     // ADC eligibility button branch.
-                                    if awardsArray[i].teams.isEmpty &&
+                                    if eligibilityFeaturesEnabled &&
+                                       awardsArray[i].teams.isEmpty &&
                                        awardsArray[i].title.contains("All-Around Champion") &&
                                        !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
                                         Spacer().frame(height: 5)
@@ -775,7 +779,8 @@ struct EventDivisionAwards: View {
                                         }
                                     }
                                     // Excellence eligibility button branch.
-                                    else if awardsArray[i].teams.isEmpty &&
+                                    else if eligibilityFeaturesEnabled &&
+                                            awardsArray[i].teams.isEmpty &&
                                             awardsArray[i].title.contains("Excellence Award") &&
                                             !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
                                         Spacer().frame(height: 5)

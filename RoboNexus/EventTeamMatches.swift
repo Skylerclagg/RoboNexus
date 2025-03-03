@@ -40,10 +40,10 @@ struct EventTeamMatches: View {
     private func updateDataSource() {
         self.dataController.fetchNotes(event: self.event, team: self.team) { (fetchNotesResult) in
             switch fetchNotesResult {
-                case let .success(notes):
-                    self.teamMatchNotes = notes
-                case .failure(_):
-                    print("Error fetching Core Data")
+            case let .success(notes):
+                self.teamMatchNotes = notes
+            case .failure(_):
+                print("Error fetching Core Data")
             }
         }
     }
@@ -84,7 +84,6 @@ struct EventTeamMatches: View {
                 matches = self.team.matches_at(event: event)
             }
 
-            // Time should be in the format of "HH:mm a"
             let formatter = DateFormatter()
             formatter.dateFormat = "h:mm a"
 
@@ -100,7 +99,6 @@ struct EventTeamMatches: View {
                     name = name.replacingOccurrences(of: "TeamWork", with: "Q")
                     name = name.replacingOccurrences(of: "#", with: "")
                     
-                    // Use started time, scheduled time, or an empty string
                     let date: String = {
                         if let started = match.started {
                             return formatter.string(from: started)
@@ -111,7 +109,6 @@ struct EventTeamMatches: View {
                         }
                     }()
                     
-                    // count, name, red1, red2, blue1, blue2, red_score, blue_score, scheduled time
                     self.matches_list.append("\(count)&&\(name)&&\(match.red_alliance[0].id)&&\(match.red_alliance[1].id)&&\(match.blue_alliance[0].id)&&\(match.blue_alliance[1].id)&&\(match.red_score)&&\(match.blue_score)&&\(date)")
                     count += 1
                 }
@@ -119,7 +116,7 @@ struct EventTeamMatches: View {
             }
         }
     }
-
+    
     var body: some View {
         VStack {
             if showLoading {
@@ -136,6 +133,38 @@ struct EventTeamMatches: View {
                         matchString: matchString,
                         team: $team
                     )
+                }
+            }
+        }
+        .onAppear {
+            fetch_info()
+        }
+        .onChange(of: teams_map) { _ in
+            // You may also trigger a refresh when teams_map changes, if needed.
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("\(team.number) Match List")
+                    .fontWeight(.medium)
+                    .font(.system(size: 19))
+                    .foregroundColor(settings.topBarContentColor())
+            }
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                // Refresh button added similar to the note.text button.
+                Button(action: {
+                    showLoading = true
+                    fetch_info()
+                }) {
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundColor(settings.topBarContentColor())
+                }
+                .accessibilityLabel("Refresh")
+                
+                Button(action: {
+                    showingTeamNotes = true
+                }) {
+                    Image(systemName: "note.text")
+                        .foregroundColor(settings.topBarContentColor())
                 }
             }
         }
@@ -170,39 +199,19 @@ struct EventTeamMatches: View {
                 }
             }
         }
-        .onAppear {
-            updateDataSource()
-            fetch_info()
-        }
         .alert(isPresented: $showAlert) {
             Alert(title: Text(alertText.rawValue), dismissButton: .default(Text("OK")))
-        }
-        .background(.clear)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("\(team.number) Match List")
-                    .fontWeight(.medium)
-                    .font(.system(size: 19))
-                    .foregroundColor(settings.topBarContentColor())
-            }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                // Removed watch app and predictions-related code
-                Button(action: {
-                    showingTeamNotes = true
-                }, label: {
-                    Image(systemName: "note.text").foregroundColor(settings.topBarContentColor())
-                })
-            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(settings.tabColor(), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .tint(settings.buttonColor())
+        .background(.clear)
     }
 }
 
 struct EventTeamMatches_Previews: PreviewProvider {
     static var previews: some View {
-        EventTeamMatches(teams_map: .constant([String: String]()), event: Event(), team: Team())
+        EventTeamMatches(teams_map: .constant([:]), event: Event(), team: Team())
     }
 }

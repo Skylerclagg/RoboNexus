@@ -22,6 +22,9 @@ struct EventDivisionRow: View {
 
     var division: String
     var event: Event
+    // Added a local binding for the teams list from the event.
+    // (Assuming the parent view holds this as state.)
+    var event_teams_list: [String]
 
     var body: some View {
         NavigationLink(
@@ -32,7 +35,8 @@ struct EventDivisionRow: View {
                     id: Int(division.split(separator: "&&")[0]) ?? 0,
                     name: String(division.split(separator: "&&")[1])
                 ),
-                teams_map: teams_map
+                teams_map: teams_map,
+                division_teams_list: event_teams_list
             )
             .environmentObject(settings)
             .environmentObject(favorites)
@@ -165,19 +169,20 @@ struct EventView: View {
                     }
                     Section("Divisions") {
                         List($event_divisions.event_divisions) { division in
+                            // Pass event_teams_list along to the row view.
                             EventDivisionRow(
                                 teams_map: $teams_map,
                                 event_teams: $event_teams,
                                 division: division.wrappedValue,
-                                event: event
+                                event: event,
+                                event_teams_list: event_teams_list
                             )
                             .environmentObject(settings)
                             .environmentObject(favorites)
                         }
                     }
                     
-                    // Show a section for "Favorite Teams Match Lists" for any of the event's teams
-                    // that are in the *current program's* favorites (instead of the old single array).
+                    // Show a section for "Favorite Teams Match Lists"
                     let favoriteEventTeams = event_teams.filter { favorites.favoriteTeams.contains($0.number) }
                     if !favoriteEventTeams.isEmpty {
                         Section("Favorite Teams Match Lists") {
@@ -212,24 +217,21 @@ struct EventView: View {
                     .foregroundColor(settings.topBarContentColor())
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                // Instead of accessing the old favorite_events array, we now do:
-                // if favorites.favoriteEvents.contains(event.sku) { ... }
                 Button(action: {
                     if favorites.favoriteEvents.contains(event.sku) {
-                        // If already in favorites, remove it
                         favorites.removeEvent(event.sku)
                         favorited = false
                     } else {
-                        // Otherwise, add it
                         favorites.addEvent(event.sku)
                         favorited = true
                     }
                 }, label: {
-                    // Show star filled if favorited, or empty star if not
                     if favorited {
-                        Image(systemName: "star.fill").foregroundColor(settings.topBarContentColor())
+                        Image(systemName: "star.fill")
+                            .foregroundColor(settings.topBarContentColor())
                     } else {
-                        Image(systemName: "star").foregroundColor(settings.topBarContentColor())
+                        Image(systemName: "star")
+                            .foregroundColor(settings.topBarContentColor())
                     }
                 })
             }
@@ -237,5 +239,14 @@ struct EventView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(settings.tabColor(), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+    }
+}
+
+struct EventView_Previews: PreviewProvider {
+    static var previews: some View {
+        EventView(event: Event(), team: nil)
+            .environmentObject(FavoriteStorage())
+            .environmentObject(UserSettings())
+            .environmentObject(ADCHubDataController())
     }
 }

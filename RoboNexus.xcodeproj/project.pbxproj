@@ -18,7 +18,6 @@
 		3DAFC80E2A2640EB00A0C41A /* CoreML in Resources */ = {isa = PBXBuildFile; fileRef = 3DAFC80D2A2640EB00A0C41A /* CoreML */; };
 		3DB11E52299543DC001DDB02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DB11E51299543DC001DDB02 /* Assets.xcassets */; };
 		3DE63FAF2C59A59C0049939C /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D22AAA92BD9C16B001AD59E /* Config.plist */; };
-		D460BF142D63F539005DD378 /* ExcellenceEligibleTeams.swift in Sources */ = {isa = PBXBuildFile; fileRef = D460BF132D63F538005DD378 /* ExcellenceEligibleTeams.swift */; };
 		D4A08B642D5A7B550088CDAC /* ConfigManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A08B632D5A7B330088CDAC /* ConfigManger.swift */; };
 		D4C3DA7C2D03984300C6FFF9 /* StateRegionMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */; };
 		D4C6BFC62CD26FE90034C350 /* PilotingSkillsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */; };
@@ -137,7 +136,6 @@
 		3DB21DD42B054D6400B12803 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		3DE63FA12C5808BA0049939C /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		3DFB59C32C536BCC0061CE6C /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
-		D460BF132D63F538005DD378 /* ExcellenceEligibleTeams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcellenceEligibleTeams.swift; sourceTree = "<group>"; };
 		D4A08B632D5A7B330088CDAC /* ConfigManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManger.swift; sourceTree = "<group>"; };
 		D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRegionMapping.swift; sourceTree = "<group>"; };
 		D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotingSkillsCalculator.swift; sourceTree = "<group>"; };
@@ -241,7 +239,6 @@
 		3DB11E4C299543D9001DDB02 /* RoboNexus */ = {
 			isa = PBXGroup;
 			children = (
-				D460BF132D63F538005DD378 /* ExcellenceEligibleTeams.swift */,
 				D4A08B632D5A7B330088CDAC /* ConfigManger.swift */,
 				D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */,
 				D4C6BFC92CD2732F0034C350 /* AutonomousFlightSkillsCalculator.swift */,
@@ -488,7 +485,6 @@
 				D4F0848D2CA47C960032E72D /* MatchUpdatesLiveActivity.swift in Sources */,
 				D4F084882CA47C360032E72D /* ADCHubData.xcdatamodeld in Sources */,
 				D4F0846A2CA47C230032E72D /* ADCHubDataController.swift in Sources */,
-				D460BF142D63F539005DD378 /* ExcellenceEligibleTeams.swift in Sources */,
 				D4F0846B2CA47C230032E72D /* ADCHubActivityController.swift in Sources */,
 				D4F0846C2CA47C230032E72D /* AppDelegate.swift in Sources */,
 				D4F0846D2CA47C230032E72D /* ADCHubApp.swift in Sources */,
@@ -766,7 +762,7 @@
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -822,7 +818,7 @@
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";

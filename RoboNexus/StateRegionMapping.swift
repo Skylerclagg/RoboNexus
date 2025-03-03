@@ -9,7 +9,8 @@
 import Foundation
 
 struct StateRegionMapping {
-    // Define the regions and their corresponding states/provinces
+    
+    // Define the regions and their corresponding states/provinces (for ADC)
     static let regionToStatesMap: [String: [String]] = [
         "Northeast": [
             "Connecticut", "Delaware", "District of Columbia", "Kentucky", "Maryland", "Massachusetts",
@@ -37,7 +38,6 @@ struct StateRegionMapping {
         "International": [
             "Greece", "Kuwait", "Mexico", "Singapore"
         ]
-        
     ]
     
     // Invert the mapping to create a State-to-Region dictionary
@@ -57,7 +57,33 @@ struct StateRegionMapping {
         "Washington, D.C.": "District of Columbia",
         "Newfoundland": "Newfoundland and Labrador",
         "NWT": "Northwest Territories",
-        "Yukon Territory": "Yukon",
+        "Yukon Territory": "Yukon"
         // Add more variations as needed
     ]
+    
+    
+    /// Original function in case something else in your app relies on it.
+    /// Uses `teamRegion` for ADC, `eventRegion` for others.
+    static func getRegion(for program: String, eventRegion: String?, teamRegion: String?) -> String {
+        // If the app is ADCHub, this might still rely on team.region by default:
+        if program == "ADC" || program == "Aerial Drone Competition" {
+            let regionValue = teamRegion ?? ""
+            let normalized = stateNameVariations[regionValue] ?? regionValue
+            return stateToRegionMap[normalized] ?? normalized
+        } else {
+            // For non‑ADC, default logic:
+            return eventRegion ?? (teamRegion ?? "Unknown Region")
+        }
+    }
+    
+    
+    // MARK: - NEW: getRegionForADC
+
+    static func getRegionForADC(eventRegion: String?) -> String {
+ 
+        let regionValue = eventRegion ?? ""
+
+        return regionValue
+    
+    }
 }

@@ -394,13 +394,22 @@ public class ADCHubAPI {
     func fetch_world_skills(forGrade grade: String, season: Int, completion: @escaping ([WorldSkillsResponse]) -> Void) {
         var components = URLComponents(string: String(format: "https://www.robotevents.com/api/seasons/%d/skills", season))!
         components.queryItems = [URLQueryItem(name: "grade_level", value: grade)]
+        
+        // Print the full URL being used
+        if let urlString = components.url?.absoluteString {
+            print("Fetching world skills for grade \(grade) for season \(season) using URL: \(urlString)")
+        } else {
+            print("Failed to construct URL for grade \(grade) and season \(season)")
+        }
+        
         let request = NSMutableURLRequest(url: components.url! as URL)
         request.httpMethod = "GET"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         let task = URLSession.shared.dataTask(with: request as URLRequest) { (response_data, response, error) in
-            if response_data != nil {
+            if let response_data = response_data {
                 do {
-                    let data = try JSONDecoder().decode([WorldSkillsResponse].self, from: response_data!)
+                    let data = try JSONDecoder().decode([WorldSkillsResponse].self, from: response_data)
                     print("Fetched \(grade) teams for season \(season): \(data.count) teams.")
                     completion(data)
                 } catch {

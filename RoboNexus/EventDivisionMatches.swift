@@ -25,16 +25,18 @@ struct EventDivisionMatches: View {
     @State private var matches_list = [String]()
     @State private var showLoading = true
     
+    /// Fetches match data for the current event and division.
     func fetch_info() {
+        print("EventDivisionMatches: Fetching match info for division: \(division.name)")
         DispatchQueue.global(qos: .userInteractive).async { [self] in
-
+            // Refresh match data
             self.event.fetch_matches(division: division)
             let matches = self.event.matches[division] ?? [Match]()
             
-            // Time should be in the format of "HH:mm a"
+            // Formatter for match times (e.g., "3:45 PM")
             let formatter = DateFormatter()
             formatter.dateFormat = "h:mm a"
-
+            
             DispatchQueue.main.async {
                 self.matches = matches
                 self.matches_list.removeAll()
@@ -47,7 +49,6 @@ struct EventDivisionMatches: View {
                     name.replace("TeamWork", with: "Q")
                     name.replace("#", with: "")
                     
-                    // Determine the match time
                     let date: String = {
                         if let started = match.started {
                             return formatter.string(from: started)
@@ -58,19 +59,20 @@ struct EventDivisionMatches: View {
                         }
                     }()
                     
-                    // Construct the match string
                     self.matches_list.append("\(count)&&\(name)&&\(match.red_alliance[0].id)&&\(match.red_alliance[1].id)&&\(match.blue_alliance[0].id)&&\(match.blue_alliance[1].id)&&\(match.red_score)&&\(match.blue_score)&&\(date)")
                     count += 1
                 }
                 self.showLoading = false
+                print("EventDivisionMatches: Fetch complete – \(matches.count) matches loaded.")
             }
         }
     }
-        
+    
     var body: some View {
         VStack {
             if showLoading {
-                ProgressView().padding()
+                ProgressView()
+                    .padding()
                 Spacer()
             } else if matches.isEmpty {
                 NoData()
@@ -86,23 +88,38 @@ struct EventDivisionMatches: View {
                 }
             }
         }
-        .task {
-            fetch_info()
-        }
         .onAppear {
             navigation_bar_manager.title = "\(division.name) Match List"
+            fetch_info()
         }
-        .background(.clear)
+        // Use onReceive to listen for refresh signals.
+        .onReceive(navigation_bar_manager.$shouldReload) { shouldReload in
+            if shouldReload {
+                print("EventDivisionMatches: Refresh signal received.")
+                showLoading = true
+                fetch_info()
+                // (Do not reset the flag here—let the parent reset it after a delay.)
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // Note: This view does not add its own refresh button,
+            // as the refresh is controlled by the parent view.
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EmptyView()
+            }
+        }
         .toolbarBackground(settings.tabColor(), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        .tint(settings.buttonColor())
+        .background(.clear)
     }
 }
 
 struct EventDivisionMatches_Previews: PreviewProvider {
     static var previews: some View {
         EventDivisionMatches(
-            teams_map: .constant([String: String]()),
+            teams_map: .constant([:]),
             event: Event(),
             division: Division()
         )
