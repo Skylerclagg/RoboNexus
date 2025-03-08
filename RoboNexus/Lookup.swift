@@ -204,7 +204,6 @@ struct TeamLookup: View {
             }
         }
     }
-
     
     var teamPageURL: URL? {
         let prog = settings.selectedProgram
@@ -233,48 +232,64 @@ struct TeamLookup: View {
                             .opacity(fetched ? 1 : 0)
                     }
                 }
-                TextField("12345a", text: $team_number, onEditingChanged: { _ in
-                    team = Team()
-                    world_skills = WorldSkills(team: Team())
-                    avg_rank = 0.0
-                    fetched = false
-                    favorited = false
-                    showLoading = false
-                }, onCommit: {
-                    showLoading = true
-                    fetch_info(number: team_number)
-                })
-                .disabled(!editable)
-                .multilineTextAlignment(.center)
-                .font(.system(size: 36))
-                .onAppear {
-                    if fetch {
+                
+                // Wrap the TextField in a ZStack to overlay a custom placeholder.
+                ZStack {
+                    // Show custom placeholder only when team_number is empty.
+                    if team_number.isEmpty {
+                        HStack(spacing: 8) {
+                            // Magnifying glass icon.
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 36))
+                            // Placeholder text.
+                            Text("12345a")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 36))
+                        }
+                        // Underline the placeholder (both text and icon).
+                        .underline()
+                    }
+                    // The actual TextField with an empty placeholder string.
+                    TextField("", text: $team_number, onEditingChanged: { _ in
+                        team = Team()
+                        world_skills = WorldSkills(team: Team())
+                        avg_rank = 0.0
+                        fetched = false
+                        favorited = false
+                        showLoading = false
+                    }, onCommit: {
+                        showLoading = true
                         fetch_info(number: team_number)
-                        fetch = false
+                    })
+                    .disabled(!editable)
+                    .multilineTextAlignment(.center)
+                    .font(.system(size: 36))
+                    .onAppear {
+                        if fetch {
+                            fetch_info(number: team_number)
+                            fetch = false
+                        }
                     }
                 }
                 
-                // Toggle favorite status using the new program-based approach
+                // Toggle favorite status using the new program-based approach.
                 Button(action: {
                     guard !team_number.isEmpty else { return }
                     showLoading = true
                     hideKeyboard()
                     team_number = team_number.uppercased()
                     
-                    // If user typed a new team, re-fetch if needed
                     if team.number != team_number {
                         fetch_info(number: team_number)
                     }
                     
-                    // Check if we already have it favorited
                     if favorites.favoriteTeams.contains(team.number) {
-                        // Remove from program-based favorites
                         favorites.removeTeam(team.number)
                         favorited = false
                         showLoading = false
                         return
                     } else {
-                        // Add to program-based favorites
                         favorites.addTeam(team.number)
                         favorited = true
                         showLoading = false
@@ -290,85 +305,86 @@ struct TeamLookup: View {
                 })
                 .padding(20)
             }
-            VStack {
-                if showLoading {
-                    ProgressView()
+        }
+        
+        VStack {
+            if showLoading {
+                ProgressView()
+            }
+        }
+        .frame(height: 10)
+        List {
+            Group {
+                HStack {
+                    Text("Name")
+                    Spacer()
+                    Text(team.name)
+                }
+                // Dynamic label: "Drone Name" for ADC; "Robot Name" for other programs.
+                HStack {
+                    Text((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition")
+                         ? "Drone Name"
+                         : "Robot Name")
+                    Spacer()
+                    Text(team.robot_name)
+                }
+                // Grade Level
+                HStack {
+                    Text("Grade Level")
+                    Spacer()
+                    Text(team.grade)
+                }
+                HStack {
+                    Text("Organization")
+                    Spacer()
+                    Text(team.organization)
+                }
+                HStack {
+                    Text("Location")
+                    Spacer()
+                    Text(fetched ? "\(team.city), \(team.region)" : "")
                 }
             }
-            .frame(height: 10)
-            List {
-                Group {
-                    HStack {
-                        Text("Name")
-                        Spacer()
-                        Text(team.name)
-                    }
-                    // Dynamic label: "Drone Name" for ADC; "Robot Name" for other programs.
-                    HStack {
-                        Text((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition")
-                             ? "Drone Name"
-                             : "Robot Name")
-                        Spacer()
-                        Text(team.robot_name)
-                    }
-                    // Grade Level
-                    HStack {
-                        Text("Grade Level")
-                        Spacer()
-                        Text(team.grade)
-                    }
-                    HStack {
-                        Text("Organization")
-                        Spacer()
-                        Text(team.organization)
-                    }
-                    HStack {
-                        Text("Location")
-                        Spacer()
-                        Text(fetched ? "\(team.city), \(team.region)" : "")
+            HStack {
+                Text("World Skills Ranking")
+                Spacer()
+                Text(fetched
+                     ? (worldSkillsData.worldSkills.ranking != 0
+                        ? "# \(worldSkillsData.worldSkills.ranking) of \(worldSkillsData.teamsCount)"
+                        : "No Data Available")
+                     : "")
+            }
+            HStack {
+                Menu("World Skills Score") {
+                    Text("\(worldSkillsData.worldSkills.driver) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
+                    Text("\(worldSkillsData.worldSkills.programming) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
+                    Text("\(worldSkillsData.worldSkills.highest_driver) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
+                    Text("\(worldSkillsData.worldSkills.highest_programming) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
+                }
+                Spacer()
+                Text(fetched
+                     ? (worldSkillsData.worldSkills.ranking != 0
+                        ? "\(worldSkillsData.worldSkills.combined)"
+                        : "No Data Available")
+                     : "")
+            }
+            HStack {
+                Menu("Awards") {
+                    ForEach(0..<award_counts.count, id: \.self) { index in
+                        Text("\(Array(award_counts.values)[index])x \(Array(award_counts.keys)[index])")
                     }
                 }
+                Spacer()
+                Text(fetched && team.registered ? "\(team.awards.count)" : "")
+            }
+            if editable {
                 HStack {
-                    Text("World Skills Ranking")
-                    Spacer()
-                    Text(fetched
-                         ? (worldSkillsData.worldSkills.ranking != 0
-                            ? "# \(worldSkillsData.worldSkills.ranking) of \(worldSkillsData.teamsCount)"
-                            : "No Data Available")
-                         : "")
-                }
-                HStack {
-                    Menu("World Skills Score") {
-                        Text("\(worldSkillsData.worldSkills.driver) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
-                        Text("\(worldSkillsData.worldSkills.programming) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
-                        Text("\(worldSkillsData.worldSkills.highest_driver) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
-                        Text("\(worldSkillsData.worldSkills.highest_programming) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
-                    }
-                    Spacer()
-                    Text(fetched
-                         ? (worldSkillsData.worldSkills.ranking != 0
-                            ? "\(worldSkillsData.worldSkills.combined)"
-                            : "No Data Available")
-                         : "")
-                }
-                HStack {
-                    Menu("Awards") {
-                        ForEach(0..<award_counts.count, id: \.self) { index in
-                            Text("\(Array(award_counts.values)[index])x \(Array(award_counts.keys)[index])")
-                        }
-                    }
-                    Spacer()
-                    Text(fetched && team.registered ? "\(team.awards.count)" : "")
-                }
-                if editable {
-                    HStack {
-                        NavigationLink(destination:
-                            TeamEventsView(team_number: team.number)
-                                .environmentObject(settings)
-                                .environmentObject(dataController)
-                        ) {
-                            Text("Events")
-                        }
+                    NavigationLink(destination:
+                        TeamEventsView(team_number: team.number)
+                            .environmentObject(settings)
+                            .environmentObject(dataController)
+                    ) {
+                        Text("Events")
                     }
                 }
             }
@@ -376,6 +392,7 @@ struct TeamLookup: View {
         .tint(settings.buttonColor())
     }
 }
+
 
 // MARK: - EventLookup & EventSearch
 
@@ -409,13 +426,30 @@ struct EventLookup: View {
     var body: some View {
         NavigationView {
             VStack {
-                TextField("Event Name", text: $eventSearch.name_query)
-                    .multilineTextAlignment(.center)
-                    .font(.system(size: 36))
-                    .padding()
-                    .onChange(of: eventSearch.name_query) { _ in
-                        eventSearch.filter_events()
+                // Use a ZStack to overlay a custom placeholder behind the text field.
+                ZStack {
+                    // Show the custom placeholder only when the query is empty.
+                    if eventSearch.name_query.isEmpty {
+                        HStack(spacing: 5) {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 36))
+                            Text("Event Name")
+                                .underline()
+                                .foregroundColor(.gray)
+                                .font(.system(size: 36))
+                        }
                     }
+                    // The actual TextField with an empty placeholder string.
+                    TextField("", text: $eventSearch.name_query)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 36))
+                        .padding()
+                        .onChange(of: eventSearch.name_query) { _ in
+                            eventSearch.filter_events()
+                        }
+                }
+
                 
                 Menu("Filters") {
                                     // Season selection remains unchanged.
@@ -493,7 +527,7 @@ struct EventLookup: View {
                                             }
                                             ForEach(eventSearch.states_map, id: \.self) { regionName in
                                                 Button(action: {
-                                                    eventSearch.region_query = regionName
+                                                    eventSearch.state_query = regionName
                                                     eventSearch.filter_events()
                                                 }) {
                                                     Text(regionName)
