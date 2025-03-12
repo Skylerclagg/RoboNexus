@@ -11,7 +11,7 @@
 
 import SwiftUI
 
-private let allAroundEligibilityFeaturesEnabled: Bool = false
+private let allAroundEligibilityFeaturesEnabled: Bool = true
 private let excellenceEligibilityFeaturesEnabled: Bool = true
 
 // MARK: - Helper Structure for Precomputed Values (ADC & Excellence flows)
@@ -145,46 +145,85 @@ struct EligibleTeamDetailsView: View {
     let event: Event
     let division: Division
     let team: Team
+    // Instead of computing rankings here, we get them from the precomputed values.
+    let precomputed: PrecomputedValues
     
-    // Compute the team’s qualifier ranking.
-    var qualifierRank: Int {
-        if let rankings = event.rankings[division] {
-            let sorted = rankings.sorted { $0.rank < $1.rank }
-            if let index = sorted.firstIndex(where: { $0.team.id == team.id }) {
-                return index + 1
-            }
-        }
-        return -1
-    }
-    
-    // Compute the team’s skills ranking.
-    var skillsRank: Int {
-        let sorted = event.skills_rankings.sorted { $0.rank < $1.rank }
-        if let index = sorted.firstIndex(where: { $0.team.id == team.id }) {
-            return index + 1
-        }
-        return -1
-    }
-    
+    @EnvironmentObject var settings: UserSettings
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Team \(team.number) Details")
+            // Header indicating the team is eligible.
+            Text("Why \(team.number) is Eligible")
                 .font(.headline)
                 .padding(.bottom, 5)
-            if qualifierRank > 0 {
-                Text("Qualifier Ranking: \(qualifierRank)")
-                    .foregroundColor(.green)
-            } else {
-                Text("Qualifier Ranking: Not Ranked")
-                    .foregroundColor(.green)
+            
+            // Ranking information using precomputed values.
+            let rankingEligible = (precomputed.qualifierRank > 0 && precomputed.qualifierRank <= precomputed.qualifierCutoff)
+            HStack {
+                Text("Ranking:")
+                Spacer()
+                Text((precomputed.qualifierRank > 0 ? "# \(precomputed.qualifierRank)" : "No Data") +
+                     " (Cutoff: \(precomputed.qualifierCutoff))")
+                    .foregroundColor(rankingEligible ? .green : .red)
             }
-            if skillsRank > 0 {
-                Text("Skills Ranking: \(skillsRank)")
-                    .foregroundColor(.green)
-            } else {
-                Text("Skills Ranking: Not Ranked")
-                    .foregroundColor(.green)
+            
+            // Skills ranking information using precomputed values.
+            let skillsEligible = (precomputed.skillsRank > 0 && precomputed.skillsRank <= precomputed.skillsCutoff)
+            HStack {
+                Text("Skills Ranking:")
+                Spacer()
+                Text((precomputed.skillsRank > 0 ? "# \(precomputed.skillsRank)" : "No Skills Ranking") +
+                     " (Cutoff: \(precomputed.skillsCutoff))")
+                    .foregroundColor(skillsEligible ? .green : .red)
             }
+            
+            Divider()
+            
+            // Display skills scores based on the selected program using precomputed skillsData.
+            if settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition" {
+                HStack {
+                    Text("Autonomous Flight Skills Score:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.programming)")
+                }
+                HStack {
+                    Text("Autonomous Flight Skills Attempts:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.programming_attempts)")
+                }
+                HStack {
+                    Text("Piloting Skills Score:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.driver)")
+                }
+                HStack {
+                    Text("Piloting Skills Attempts:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.driver_attempts)")
+                }
+            } else {
+                HStack {
+                    Text("Programming Skills Score:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.programming)")
+                }
+                HStack {
+                    Text("Programming Skills Attempts:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.programming_attempts)")
+                }
+                HStack {
+                    Text("Driver Skills Score:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.driver)")
+                }
+                HStack {
+                    Text("Driver Skills Attempts:")
+                    Spacer()
+                    Text("\(precomputed.skillsData.driver_attempts)")
+                }
+            }
+            
             Spacer()
         }
         .padding()
@@ -217,16 +256,22 @@ struct RequirementsView: View {
 }
 
 // MARK: - Subviews for Excellence Eligibility
-
-/// A row view for an eligible team (Excellence).
 struct EligibleTeamRow: View {
     let team: Team
     let event: Event
     let division: Division
+    let precomputed: PrecomputedValues
     let generateLocation: (Team) -> String
     
     var body: some View {
-        NavigationLink(destination: EligibleTeamDetailsView(event: event, division: division, team: team)) {
+        NavigationLink(
+            destination: EligibleTeamDetailsView(
+                event: event,
+                division: division,
+                team: team,
+                precomputed: precomputed
+            )
+        ) {
             HStack {
                 Text(team.number)
                     .font(.system(size: 20))
@@ -235,7 +280,6 @@ struct EligibleTeamRow: View {
                 VStack(alignment: .leading) {
                     Text(team.name)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .frame(height: 20)
                     Spacer().frame(height: 5)
                     Text(generateLocation(team))
                         .font(.system(size: 11))
@@ -279,11 +323,13 @@ struct IneligibleTeamRowExcellence: View {
     }
 }
 
-/// A section view for eligible teams (Excellence).
+// MARK: - Eligible Teams Section
 struct EligibleTeamsSectionExcellence: View {
     let eligibleTeams: [Team]
     let event: Event
     let division: Division
+    // Dictionary mapping team IDs to their precomputed values.
+    let precomputedExcellence: [Int: PrecomputedValues]
     let generateLocation: (Team) -> String
     
     var body: some View {
@@ -292,15 +338,37 @@ struct EligibleTeamsSectionExcellence: View {
                 Text("No eligible teams")
             } else {
                 ForEach(eligibleTeams, id: \.id) { team in
-                    EligibleTeamRow(team: team,
-                                    event: event,
-                                    division: division,
-                                    generateLocation: generateLocation)
+                    // Look up the precomputed values for this team.
+                    if let precomputed = precomputedExcellence[team.id] {
+                        EligibleTeamRow(
+                            team: team,
+                            event: event,
+                            division: division,
+                            precomputed: precomputed,
+                            generateLocation: generateLocation
+                        )
+                    } else {
+                        // Fallback if precomputed value is missing.
+                        EligibleTeamRow(
+                            team: team,
+                            event: event,
+                            division: division,
+                            precomputed: PrecomputedValues(
+                                qualifierRank: -1,
+                                qualifierCutoff: 1,
+                                skillsRank: -1,
+                                skillsCutoff: 1,
+                                skillsData: (0, 0, 0, 0)
+                            ),
+                            generateLocation: generateLocation
+                        )
+                    }
                 }
             }
         }
     }
 }
+
 
 /// A section view for ineligible teams (Excellence).
 struct IneligibleTeamsSectionExcellence: View {
@@ -363,9 +431,12 @@ struct ExcellenceEligibleTeams: View {
     @State var eligible_teams: [Team] = []
     @State var ineligibleTeams: [Team] = []
     @State var ineligibleTeamsReasons: [Int: [String]] = [:]
+    // Create a separate dictionary for eligible teams’ precomputed values.
+    @State var precomputedEligible: [Int: PrecomputedValues] = [:]
+    // This dictionary remains for ineligible teams.
+    @State var precomputedIneligible: [Int: PrecomputedValues] = [:]
     @State var showLoading = true
     @State var division: Division
-    @State var precomputedExcellence: [Int: PrecomputedValues] = [:]
 
     // MARK: - Helper Functions
     func generate_location(team: Team) -> String {
@@ -373,8 +444,7 @@ struct ExcellenceEligibleTeams: View {
         return parts.joined(separator: ", ")
     }
     
-    // We assume levelFilter and filteredSkillsRankings are similar to ADC flow.
-    
+    /// Fetches and processes ranking and skills data asynchronously for Excellence eligibility.
     func fetch_info_excellence() {
         DispatchQueue.global(qos: .userInteractive).async { [self] in
             guard !(event.rankings[division] ?? []).isEmpty, !event.skills_rankings.isEmpty else {
@@ -392,30 +462,67 @@ struct ExcellenceEligibleTeams: View {
             var eligible_teams_local = [Team]()
             var ineligibleTeams_local = [Team]()
             var ineligibleTeamsReasons_local = [Int: [String]]()
-            precomputedExcellence = [:]
+            precomputedEligible = [:]
+            precomputedIneligible = [:]
             
             if isCombinedAward {
                 let qualifierRankings = event.rankings[division] ?? []
                 let ranking_cutoff = max(1, Int((Double(qualifierRankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
-                let rankings = qualifierRankings.sorted { $0.rank < $1.rank }
-                let rankings_teams = rankings.prefix(ranking_cutoff).map { $0.team }
+                let sortedRankings = qualifierRankings.sorted { $0.rank < $1.rank }
+                let rankings_teams = sortedRankings.prefix(ranking_cutoff).map { $0.team }
                 
                 let overall_skills_rankings = event.skills_rankings
                 let overall_skills_sorted = overall_skills_rankings.sorted { $0.rank < $1.rank }
-                let overall_skills_cutoff = max(1, Int(ceil(Double(overall_skills_rankings.count) * 0.5)))
+                let overall_skills_cutoff = max(1, Int((Double(qualifierRankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
+                
+                print("Combined Award - Total Qualifier Rankings: \(qualifierRankings.count), ranking_cutoff: \(ranking_cutoff)")
+                print("Combined Award - Overall skills cutoff: \(overall_skills_cutoff)")
                 
                 for team in event.teams {
                     var reasons = [String]()
                     let programmingRanking = event.skills_rankings.first(where: { $0.team.id == team.id })
-                    let hasProgrammingScore = programmingRanking != nil && programmingRanking!.programming_score > 0
+                    let hasProgrammingScore = programmingRanking?.programming_score ?? 0 > 0
                     let hasDriverScore = event.skills_rankings.contains { $0.team.id == team.id && $0.driver_score > 0 }
                     let isInRankingCutoff = rankings_teams.contains(where: { $0.id == team.id })
                     
-                    if isInRankingCutoff && hasProgrammingScore {
+                    let skillsRankComputed: Int = {
+                        if let index = overall_skills_sorted.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let qualifierRankComputed: Int = {
+                        if let index = sortedRankings.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
+                        if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
+                            return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
+                        }
+                        return (0, 0, 0, 0)
+                    }()
+                    let computedPre = PrecomputedValues(
+                        qualifierRank: qualifierRankComputed,
+                        qualifierCutoff: ranking_cutoff,
+                        skillsRank: skillsRankComputed,
+                        skillsCutoff: overall_skills_cutoff,
+                        skillsData: skillsDataComputed
+                    )
+                    
+                    print("Team \(team.number) (Combined): qualifierRank=\(qualifierRankComputed) / \(ranking_cutoff), skillsRank=\(skillsRankComputed) / \(overall_skills_cutoff)")
+                    
+                    if isInRankingCutoff &&
+                        hasProgrammingScore &&
+                        hasDriverScore &&
+                        (skillsRankComputed > 0 && skillsRankComputed <= overall_skills_cutoff) {
                         eligible_teams_local.append(team)
+                        precomputedEligible[team.id] = computedPre
+                        print("Team \(team.number) marked ELIGIBLE")
                     } else {
                         if !isInRankingCutoff {
-                            if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
+                            if let index = sortedRankings.firstIndex(where: { $0.team.id == team.id }) {
                                 let qualifierRank = index + 1
                                 reasons.append("- Qualifier Ranking: \(qualifierRank) (cutoff: \(ranking_cutoff))")
                             } else {
@@ -425,82 +532,114 @@ struct ExcellenceEligibleTeams: View {
                         if !hasProgrammingScore {
                             if let pr = programmingRanking {
                                 if pr.programming_attempts == 0 {
-                                    reasons.append("- No Autonomous Flight attempts")
+                                    reasons.append("- No programming attempts")
                                 } else {
-                                    reasons.append("- Autonomous Flight Skills score: \(pr.programming_score) (attempts: \(pr.programming_attempts))")
+                                    reasons.append("- Programming score: \(pr.programming_score) (attempts: \(pr.programming_attempts))")
                                 }
                             } else {
-                                reasons.append("- No Autonomous Flight Skills score")
+                                reasons.append("- No programming score")
                             }
                         }
                         if !hasDriverScore {
-                            reasons.append("- No Piloting score")
+                            reasons.append("- No driver score")
                         }
+                        if skillsRankComputed == -1 {
+                            reasons.append("- Not in skills Rankings")
+                        } else if skillsRankComputed > overall_skills_cutoff {
+                            reasons.append("- Skills Ranking: \(skillsRankComputed) (cutoff: \(overall_skills_cutoff))")
+                        }
+                        
                         ineligibleTeams_local.append(team)
                         ineligibleTeamsReasons_local[team.id] = reasons
-                        
-                        // Compute precomputed values.
-                        let qualifierRankComputed: Int = {
-                            if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsRankComputed: Int = {
-                            if let index = overall_skills_sorted.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
-                            if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
-                                return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
-                            }
-                            return (0,0,0,0)
-                        }()
-                        precomputedExcellence[team.id] = PrecomputedValues(
-                            qualifierRank: qualifierRankComputed,
-                            qualifierCutoff: ranking_cutoff,
-                            skillsRank: skillsRankComputed,
-                            skillsCutoff: overall_skills_cutoff,
-                            skillsData: skillsDataComputed
-                        )
+                        precomputedIneligible[team.id] = computedPre
+                        print("Team \(team.number) marked INELIGIBLE: \(reasons.joined(separator: ", "))")
                     }
                 }
             } else {
+                // Split award: separate by grade.
                 let grade = middleSchool ? "Middle School" : "High School"
                 let qualifierRankings = event.rankings[division] ?? []
-                let total_rankings = qualifierRankings.filter {
+                // Filter qualifier rankings by grade.
+                let gradeQualifierRankings = qualifierRankings.filter {
                     if let t = event.get_team(id: $0.team.id) {
                         return grade == "Middle School" ? (t.grade == "Middle School") : (t.grade != "Middle School")
                     }
                     return false
                 }
-                let ranking_cutoff = max(1, Int((Double(total_rankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
-                let rankings = total_rankings.sorted { $0.rank < $1.rank }
-                let rankings_teams = rankings.prefix(ranking_cutoff).map { $0.team }
+                let ranking_cutoff = max(1, Int((Double(gradeQualifierRankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
+                let sortedRankings = gradeQualifierRankings.sorted { $0.rank < $1.rank }
+                let rankings_teams = sortedRankings.prefix(ranking_cutoff).map { $0.team }
                 
-                let skillsRankingsForGrade = event.skills_rankings.filter {
+                // Filter skills rankings by grade.
+                let gradeSkillsRankings = event.skills_rankings.filter {
                     if let t = event.get_team(id: $0.team.id) {
                         return grade == "Middle School" ? (t.grade == "Middle School") : (t.grade != "Middle School")
                     }
                     return false
                 }
-                let skillsCutoff = ranking_cutoff
-                let sortedSkillsRankings = skillsRankingsForGrade.sorted { $0.rank < $1.rank }
+                let skillsCutoff = ranking_cutoff  // cutoff based on grade-specific qualifier rankings
+                let sortedSkillsRankings = gradeSkillsRankings.sorted { $0.rank < $1.rank }
+                
+                print("Split Award (\(grade)) - Total qualifier rankings: \(gradeQualifierRankings.count), cutoff: \(ranking_cutoff)")
+                print("Split Award (\(grade)) - Skills cutoff: \(skillsCutoff)")
                 
                 for team in event.teams where (event.get_team(id: team.id)?.grade ?? "") == grade {
                     var reasons = [String]()
                     let programmingRanking = event.skills_rankings.first(where: { $0.team.id == team.id })
-                    let hasProgrammingScore = programmingRanking != nil && programmingRanking!.programming_score > 0
+                    let hasProgrammingScore = programmingRanking?.programming_score ?? 0 > 0
                     let hasDriverScore = event.skills_rankings.contains { $0.team.id == team.id && $0.driver_score > 0 }
                     let isInRankingCutoff = rankings_teams.contains(where: { $0.id == team.id })
                     
+                    let skillsRankComputed: Int = {
+                        if let index = sortedSkillsRankings.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let qualifierRankComputed: Int = {
+                        if let index = sortedRankings.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
+                        if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
+                            return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
+                        }
+                        return (0, 0, 0, 0)
+                    }()
+                    let computedPre = PrecomputedValues(
+                        qualifierRank: qualifierRankComputed,
+                        qualifierCutoff: ranking_cutoff,
+                        skillsRank: skillsRankComputed,
+                        skillsCutoff: skillsCutoff,
+                        skillsData: skillsDataComputed
+                    )
+                    
+                    print("Team \(team.number) (\(grade)): qualifierRank=\(qualifierRankComputed)/\(ranking_cutoff), skillsRank=\(skillsRankComputed)/\(skillsCutoff)")
+                    
+                    // Check eligibility: must be in qualifier cutoff, have programming score,
+                    // and skills rank must be valid.
                     if isInRankingCutoff && hasProgrammingScore {
-                        eligible_teams_local.append(team)
+                        if skillsRankComputed == -1 {
+                            reasons.append("- Not in skills Rankings")
+                        } else if skillsRankComputed > skillsCutoff {
+                            reasons.append("- Skills Ranking: \(skillsRankComputed) (cutoff: \(skillsCutoff))")
+                        }
+                        
+                        if reasons.isEmpty {
+                            eligible_teams_local.append(team)
+                            precomputedEligible[team.id] = computedPre
+                            print("Team \(team.number) (\(grade)) marked ELIGIBLE")
+                        } else {
+                            ineligibleTeams_local.append(team)
+                            ineligibleTeamsReasons_local[team.id] = reasons
+                            precomputedIneligible[team.id] = computedPre
+                            print("Team \(team.number) (\(grade)) marked INELIGIBLE: \(reasons.joined(separator: ", "))")
+                        }
                     } else {
                         if !isInRankingCutoff {
-                            if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
+                            if let index = sortedRankings.firstIndex(where: { $0.team.id == team.id }) {
                                 let qualifierRank = index + 1
                                 reasons.append("- Qualifier Ranking: \(qualifierRank) (cutoff: \(ranking_cutoff))")
                             } else {
@@ -523,33 +662,8 @@ struct ExcellenceEligibleTeams: View {
                         }
                         ineligibleTeams_local.append(team)
                         ineligibleTeamsReasons_local[team.id] = reasons
-                        
-                        // Compute precomputed values.
-                        let qualifierRankComputed: Int = {
-                            if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsRankComputed: Int = {
-                            if let index = sortedSkillsRankings.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
-                            if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
-                                return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
-                            }
-                            return (0,0,0,0)
-                        }()
-                        precomputedExcellence[team.id] = PrecomputedValues(
-                            qualifierRank: qualifierRankComputed,
-                            qualifierCutoff: ranking_cutoff,
-                            skillsRank: skillsRankComputed,
-                            skillsCutoff: skillsCutoff,
-                            skillsData: skillsDataComputed
-                        )
+                        precomputedIneligible[team.id] = computedPre
+                        print("Team \(team.number) (\(grade)) marked INELIGIBLE: \(reasons.joined(separator: ", "))")
                     }
                 }
             }
@@ -572,19 +686,20 @@ struct ExcellenceEligibleTeams: View {
                     .navigationBarTitle("Excellence Eligibility", displayMode: .inline)
             } else {
                 List {
-                    // Eligible Teams Section
+                    // Pass the eligible teams' precomputed values to the section.
                     EligibleTeamsSectionExcellence(
                         eligibleTeams: eligible_teams,
                         event: event,
                         division: division,
+                        precomputedExcellence: precomputedEligible, // Use eligible dictionary here
                         generateLocation: { team in generate_location(team: team) }
                     )
                     
-                    // Ineligible Teams Section
+                    // Ineligible Teams Section (unchanged)
                     IneligibleTeamsSectionExcellence(
                         ineligibleTeams: ineligibleTeams,
                         ineligibleTeamsReasons: ineligibleTeamsReasons,
-                        precomputedExcellence: precomputedExcellence,
+                        precomputedExcellence: precomputedIneligible,
                         generateLocation: { team in generate_location(team: team) }
                     )
                 }
@@ -608,6 +723,7 @@ struct AllAroundChampionEligibleTeams: View {
     @State var ineligibleTeams: [Team] = []
     @State var ineligibleTeamsReasons: [Int: [String]] = [:]
     @State var precomputedIneligible: [Int: PrecomputedValues] = [:]
+    @State var precomputedEligible: [Int: PrecomputedValues] = [:]
     
     @State var showLoading = true
     @State var showRequirementsSheet = false   // Controls display of the requirements sheet.
@@ -658,19 +774,20 @@ struct AllAroundChampionEligibleTeams: View {
             print("Awards for Division: \(allAroundAwards.map { $0.title })")
             print("isCombinedAward = \(isCombinedAward)")
             
+            let qualifierRankings = event.rankings[division] ?? []
             let overall_skills_rankings = event.skills_rankings
-            let overall_skills_cutoff = max(1, Int(ceil(Double(overall_skills_rankings.count) * 0.5)))
+            let overall_skills_cutoff = max(1, Int(ceil(Double(qualifierRankings.count) * 0.5).rounded(.toNearestOrEven)))
             let overall_skills_sorted = overall_skills_rankings.sorted { $0.rank < $1.rank }
-            let overall_skills_teams = overall_skills_sorted.prefix(overall_skills_cutoff).map { $0.team }
             
             var eligible_teams_local = [Team]()
             var ineligibleTeams_local = [Team]()
             var ineligibleTeamsReasons_local = [Int: [String]]()
             precomputedIneligible = [:]
+            precomputedEligible = [:]  // Reset eligible dictionary
             
             if isCombinedAward {
-                let qualifierRankings = event.rankings[division] ?? []
-                let ranking_cutoff = max(1, Int(ceil(Double(qualifierRankings.count) * 0.5)))
+                // Combined award: no grade split.
+                let ranking_cutoff = max(1, Int(ceil(Double(qualifierRankings.count) * 0.5).rounded(.toNearestOrEven)))
                 let rankings = qualifierRankings.sorted { $0.rank < $1.rank }
                 let rankings_teams = rankings.prefix(ranking_cutoff).map { $0.team }
                 
@@ -678,12 +795,44 @@ struct AllAroundChampionEligibleTeams: View {
                     var reasons = [String]()
                     
                     let programmingRanking = event.skills_rankings.first(where: { $0.team.id == team.id })
-                    let hasProgrammingScore = programmingRanking != nil && programmingRanking!.programming_score > 0
+                    let hasProgrammingScore = programmingRanking?.programming_score ?? 0 > 0
                     let hasDriverScore = event.skills_rankings.contains { $0.team.id == team.id && $0.driver_score > 0 }
                     let isInRankingCutoff = rankings_teams.contains(where: { $0.id == team.id })
                     
-                    if isInRankingCutoff && hasProgrammingScore && hasDriverScore {
+                    // Compute the skills rank and other precomputed values.
+                    let skillsRankComputed: Int = {
+                        if let index = overall_skills_sorted.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let qualifierRankComputed: Int = {
+                        if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
+                        if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
+                            return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
+                        }
+                        return (0, 0, 0, 0)
+                    }()
+                    let computedPre = PrecomputedValues(
+                        qualifierRank: qualifierRankComputed,
+                        qualifierCutoff: ranking_cutoff,
+                        skillsRank: skillsRankComputed,
+                        skillsCutoff: overall_skills_cutoff,
+                        skillsData: skillsDataComputed
+                    )
+                    
+                    // Now also check that skillsRank is within cutoff.
+                    if isInRankingCutoff &&
+                        hasProgrammingScore &&
+                        hasDriverScore &&
+                        (skillsRankComputed > 0 && skillsRankComputed <= overall_skills_cutoff) {
                         eligible_teams_local.append(team)
+                        precomputedEligible[team.id] = computedPre
                     } else {
                         if !isInRankingCutoff {
                             if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
@@ -709,38 +858,12 @@ struct AllAroundChampionEligibleTeams: View {
                         }
                         ineligibleTeams_local.append(team)
                         ineligibleTeamsReasons_local[team.id] = reasons
-                        
-                        // Compute precomputed values.
-                        let qualifierRankComputed: Int = {
-                            if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsRankComputed: Int = {
-                            if let index = overall_skills_sorted.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
-                            if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
-                                return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
-                            }
-                            return (0,0,0,0)
-                        }()
-                        precomputedIneligible[team.id] = PrecomputedValues(
-                            qualifierRank: qualifierRankComputed,
-                            qualifierCutoff: ranking_cutoff,
-                            skillsRank: skillsRankComputed,
-                            skillsCutoff: overall_skills_cutoff,
-                            skillsData: skillsDataComputed
-                        )
+                        precomputedIneligible[team.id] = computedPre
                     }
                 }
             } else {
+                // Split award: separate by grade.
                 let grade = middleSchool ? "Middle School" : "High School"
-                let qualifierRankings = event.rankings[division] ?? []
                 let total_rankings = qualifierRankings.filter {
                     if let t = event.get_team(id: $0.team.id) {
                         return grade == "Middle School" ? (t.grade == "Middle School") : (t.grade != "Middle School")
@@ -763,12 +886,40 @@ struct AllAroundChampionEligibleTeams: View {
                 for team in event.teams where (event.get_team(id: team.id)?.grade ?? "") == grade {
                     var reasons = [String]()
                     let programmingRanking = event.skills_rankings.first(where: { $0.team.id == team.id })
-                    let hasProgrammingScore = programmingRanking != nil && programmingRanking!.programming_score > 0
+                    let hasProgrammingScore = programmingRanking?.programming_score ?? 0 > 0
                     let hasDriverScore = event.skills_rankings.contains { $0.team.id == team.id && $0.driver_score > 0 }
                     let isInRankingCutoff = rankings_teams.contains(where: { $0.id == team.id })
                     
-                    if isInRankingCutoff && hasProgrammingScore {
+                    let skillsRankComputed: Int = {
+                        if let index = sortedSkillsRankings.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let qualifierRankComputed: Int = {
+                        if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
+                    let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
+                        if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
+                            return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
+                        }
+                        return (0, 0, 0, 0)
+                    }()
+                    let computedPre = PrecomputedValues(
+                        qualifierRank: qualifierRankComputed,
+                        qualifierCutoff: ranking_cutoff,
+                        skillsRank: skillsRankComputed,
+                        skillsCutoff: skillsCutoff,
+                        skillsData: skillsDataComputed
+                    )
+                    
+                    // Require both the qualification and skills rank to be within cutoff.
+                    if isInRankingCutoff && hasProgrammingScore && (skillsRankComputed > 0 && skillsRankComputed <= skillsCutoff) {
                         eligible_teams_local.append(team)
+                        precomputedEligible[team.id] = computedPre
                     } else {
                         if !isInRankingCutoff {
                             if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
@@ -794,33 +945,7 @@ struct AllAroundChampionEligibleTeams: View {
                         }
                         ineligibleTeams_local.append(team)
                         ineligibleTeamsReasons_local[team.id] = reasons
-                        
-                        // Compute precomputed values.
-                        let qualifierRankComputed: Int = {
-                            if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsRankComputed: Int = {
-                            if let index = sortedSkillsRankings.firstIndex(where: { $0.team.id == team.id }) {
-                                return index + 1
-                            }
-                            return -1
-                        }()
-                        let skillsDataComputed: (programming: Int, programming_attempts: Int, driver: Int, driver_attempts: Int) = {
-                            if let sr = event.skills_rankings.first(where: { $0.team.id == team.id }) {
-                                return (sr.programming_score, sr.programming_attempts, sr.driver_score, sr.driver_attempts)
-                            }
-                            return (0,0,0,0)
-                        }()
-                        precomputedIneligible[team.id] = PrecomputedValues(
-                            qualifierRank: qualifierRankComputed,
-                            qualifierCutoff: ranking_cutoff,
-                            skillsRank: skillsRankComputed,
-                            skillsCutoff: skillsCutoff,
-                            skillsData: skillsDataComputed
-                        )
+                        precomputedIneligible[team.id] = computedPre
                     }
                 }
             }
@@ -833,7 +958,6 @@ struct AllAroundChampionEligibleTeams: View {
             }
         }
     }
-    
     var body: some View {
         NavigationView {
             if showLoading {
@@ -843,26 +967,68 @@ struct AllAroundChampionEligibleTeams: View {
                     .navigationBarTitle("All-Around Champion Eligibility", displayMode: .inline)
             } else {
                 List {
-                    // Eligible Teams Section
+                    // Eligible Teams Section using precomputedExcellence values.
                     Section(header: Text("Eligible Teams")) {
                         if eligible_teams.isEmpty {
                             Text("No eligible teams")
                         } else {
                             ForEach(eligible_teams, id: \.id) { team in
-                                NavigationLink(destination: EligibleTeamDetailsView(event: event, division: division, team: team)) {
-                                    HStack {
-                                        Text(team.number)
-                                            .font(.system(size: 20))
-                                            .frame(width: 80, alignment: .leading)
-                                            .bold()
-                                        VStack(alignment: .leading) {
-                                            Text(team.name)
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                                .frame(height: 20)
-                                            Spacer().frame(height: 5)
-                                            Text(generate_location(team: team))
-                                                .font(.system(size: 11))
-                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                // Look up precomputed values for eligible teams.
+                                if let precomputed = precomputedEligible[team.id] {
+                                    NavigationLink(
+                                        destination: EligibleTeamDetailsView(
+                                            event: event,
+                                            division: division,
+                                            team: team,
+                                            precomputed: precomputed
+                                        )
+                                    ) {
+                                        HStack {
+                                            Text(team.number)
+                                                .font(.system(size: 20))
+                                                .frame(width: 80, alignment: .leading)
+                                                .bold()
+                                            VStack(alignment: .leading) {
+                                                Text(team.name)
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                    .frame(height: 20)
+                                                Spacer().frame(height: 5)
+                                                Text(generate_location(team: team))
+                                                    .font(.system(size: 11))
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    // Fallback in case the precomputed values are missing.
+                                    NavigationLink(
+                                        destination: EligibleTeamDetailsView(
+                                            event: event,
+                                            division: division,
+                                            team: team,
+                                            precomputed: PrecomputedValues(
+                                                qualifierRank: -1,
+                                                qualifierCutoff: 1,
+                                                skillsRank: -1,
+                                                skillsCutoff: 1,
+                                                skillsData: (0, 0, 0, 0)
+                                            )
+                                        )
+                                    ) {
+                                        HStack {
+                                            Text(team.number)
+                                                .font(.system(size: 20))
+                                                .frame(width: 80, alignment: .leading)
+                                                .bold()
+                                            VStack(alignment: .leading) {
+                                                Text(team.name)
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                    .frame(height: 20)
+                                                Spacer().frame(height: 5)
+                                                Text(generate_location(team: team))
+                                                    .font(.system(size: 11))
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                            }
                                         }
                                     }
                                 }
@@ -870,22 +1036,24 @@ struct AllAroundChampionEligibleTeams: View {
                         }
                     }
                     
-                    // Ineligible Teams Section
+                    // Ineligible Teams Section using precomputedIneligible values.
                     Section(header: Text("Ineligible Teams")) {
                         if ineligibleTeams.isEmpty {
                             Text("All teams that meet the grade requirement are eligible.")
                         } else {
                             ForEach(ineligibleTeams, id: \.id) { team in
                                 if let pre = precomputedIneligible[team.id] {
-                                    NavigationLink(destination: ADCIneligibilityReasonsView(
-                                        team: team,
-                                        reasons: ineligibleTeamsReasons[team.id] ?? [],
-                                        qualifierRank: pre.qualifierRank,
-                                        qualifierCutoff: pre.qualifierCutoff,
-                                        skillsRank: pre.skillsRank,
-                                        skillsCutoff: pre.skillsCutoff,
-                                        skillsData: pre.skillsData
-                                    )) {
+                                    NavigationLink(
+                                        destination: ADCIneligibilityReasonsView(
+                                            team: team,
+                                            reasons: ineligibleTeamsReasons[team.id] ?? [],
+                                            qualifierRank: pre.qualifierRank,
+                                            qualifierCutoff: pre.qualifierCutoff,
+                                            skillsRank: pre.skillsRank,
+                                            skillsCutoff: pre.skillsCutoff,
+                                            skillsData: pre.skillsData
+                                        )
+                                    ) {
                                         HStack {
                                             Text(team.number)
                                                 .font(.system(size: 20))
@@ -900,15 +1068,17 @@ struct AllAroundChampionEligibleTeams: View {
                                         }
                                     }
                                 } else {
-                                    NavigationLink(destination: ADCIneligibilityReasonsView(
-                                        team: team,
-                                        reasons: ineligibleTeamsReasons[team.id] ?? [],
-                                        qualifierRank: -1,
-                                        qualifierCutoff: 1,
-                                        skillsRank: -1,
-                                        skillsCutoff: 1,
-                                        skillsData: (0, 0, 0, 0)
-                                    )) {
+                                    NavigationLink(
+                                        destination: ADCIneligibilityReasonsView(
+                                            team: team,
+                                            reasons: ineligibleTeamsReasons[team.id] ?? [],
+                                            qualifierRank: -1,
+                                            qualifierCutoff: 1,
+                                            skillsRank: -1,
+                                            skillsCutoff: 1,
+                                            skillsData: (0, 0, 0, 0)
+                                        )
+                                    ) {
                                         HStack {
                                             Text(team.number)
                                                 .font(.system(size: 20))
@@ -948,6 +1118,7 @@ struct AllAroundChampionEligibleTeams: View {
             }
         }
     }
+
 }
 
 // MARK: - EligibilitySheet Enum
@@ -1035,8 +1206,8 @@ struct EventDivisionAwards: View {
                                     }
                                     // ADC eligibility button branch.
                                     if allAroundEligibilityFeaturesEnabled &&
-                                        awardsArray[i].teams.isEmpty &&
-                                       awardsArray[i].title.contains("All-Around Champion") &&
+                                        //awardsArray[i].teams.isEmpty &&
+                                        awardsArray[i].title.contains("All-Around Champion") &&
                                        !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
                                         Spacer().frame(height: 5)
                                         Button("Show Eligible Teams") {
@@ -1062,7 +1233,7 @@ struct EventDivisionAwards: View {
                                     }
                                     // Excellence eligibility button branch.
                                     else if excellenceEligibilityFeaturesEnabled &&
-                                            awardsArray[i].teams.isEmpty &&
+                                            //awardsArray[i].teams.isEmpty &&
                                             awardsArray[i].title.contains("Excellence Award") &&
                                             !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
                                         Spacer().frame(height: 5)

@@ -133,6 +133,15 @@ struct EventView: View {
                         ) {
                             Text("Information")
                         }
+                        
+                        // New Agenda NavigationLink added below the Information button.
+                        NavigationLink(
+                            destination: AgendaView(event: event)
+                                .environmentObject(settings)
+                        ) {
+                            Text("Agenda")
+                        }
+                        
                         NavigationLink(
                             destination: EventTeams(
                                 event: event,
@@ -145,6 +154,7 @@ struct EventView: View {
                         ) {
                             Text("Teams")
                         }
+                        
                         if let team = team {
                             NavigationLink(
                                 destination: EventTeamMatches(
@@ -159,6 +169,7 @@ struct EventView: View {
                             }
                         }
                     }
+                    
                     Section("Skills") {
                         NavigationLink(
                             destination: EventSkillsRankings(event: event, teams_map: teams_map)
