@@ -96,16 +96,16 @@ struct EventDivisionView: View {
                 navigation_bar_manager.title = event.name
             }
             .toolbar {
-                // Principal: Display the navigation title.
+                // Principal item: Navigation Title.
                 ToolbarItem(placement: .principal) {
                     Text(navigation_bar_manager.title)
                         .fontWeight(.medium)
                         .font(.system(size: 19))
                         .foregroundColor(settings.topBarContentColor())
                 }
-                // Trailing group: Show buttons based on the current title.
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Favorites button: Only when the title exactly equals the event name.
+                
+                // Trailing: Favorites button (only when title equals event.name)
+                ToolbarItem(placement: .navigationBarTrailing) {
                     if navigation_bar_manager.title == event.name {
                         Button(action: {
                             if favorites.favoriteEvents.contains(event.sku) {
@@ -118,7 +118,21 @@ struct EventDivisionView: View {
                         }
                         .foregroundColor(settings.topBarContentColor())
                     }
-                    // Refresh button: Show when the title indicates a refreshable page.
+                }
+                
+                // Trailing: Data Exporter NavigationLink when title contains "Teams".
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if navigation_bar_manager.title.contains("Teams") {
+                        NavigationLink(destination: DataExporter(event: event, division: division)
+                                        .environmentObject(settings)) {
+                            Image(systemName: "doc.badge.plus")
+                                .foregroundColor(settings.topBarContentColor())
+                        }
+                    }
+                }
+                
+                // Trailing: Refresh button for certain titles.
+                ToolbarItem(placement: .navigationBarTrailing) {
                     if navigation_bar_manager.title.contains("Game Manual") ||
                         navigation_bar_manager.title.contains("Match List") ||
                         navigation_bar_manager.title.contains("Rankings") {
@@ -130,7 +144,10 @@ struct EventDivisionView: View {
                         .foregroundColor(settings.topBarContentColor())
                         .accessibilityLabel("Refresh")
                     }
-                    // World Skills link: When the title contains "Skills".
+                }
+                
+                // Trailing: World Skills link when title contains "Skills".
+                ToolbarItem(placement: .navigationBarTrailing) {
                     if navigation_bar_manager.title.contains("Skills") {
                         Link(destination: URL(string: "https://www.robotevents.com/robot-competitions/adc/standings/skills")!) {
                             Image(systemName: "link")
@@ -139,6 +156,7 @@ struct EventDivisionView: View {
                     }
                 }
             }
+
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(settings.tabColor(), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)

@@ -19,6 +19,8 @@
 		3DB11E52299543DC001DDB02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DB11E51299543DC001DDB02 /* Assets.xcassets */; };
 		3DE63FAF2C59A59C0049939C /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D22AAA92BD9C16B001AD59E /* Config.plist */; };
 		D4A08B642D5A7B550088CDAC /* ConfigManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A08B632D5A7B330088CDAC /* ConfigManger.swift */; };
+		D4AB4E7A2D931F6600218475 /* MatchScoreEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */; };
+		D4AB4E7D2D93303A00218475 /* DataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F332FE2CA78AE300C7EE4F /* DataExporter.swift */; };
 		D4BBB7322D809D22004E4E6E /* AgendaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BBB7312D809D16004E4E6E /* AgendaView.swift */; };
 		D4BBB7352D809FD3004E4E6E /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = D4BBB7342D809FD3004E4E6E /* SwiftSoup */; };
 		D4C3DA7C2D03984300C6FFF9 /* StateRegionMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */; };
@@ -139,6 +141,7 @@
 		3DE63FA12C5808BA0049939C /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		3DFB59C32C536BCC0061CE6C /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		D4A08B632D5A7B330088CDAC /* ConfigManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManger.swift; sourceTree = "<group>"; };
+		D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchScoreEntry.swift; sourceTree = "<group>"; };
 		D4BBB7312D809D16004E4E6E /* AgendaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgendaView.swift; sourceTree = "<group>"; };
 		D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRegionMapping.swift; sourceTree = "<group>"; };
 		D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotingSkillsCalculator.swift; sourceTree = "<group>"; };
@@ -221,7 +224,6 @@
 		3DB11E41299543D9001DDB02 = {
 			isa = PBXGroup;
 			children = (
-				D4BBB7312D809D16004E4E6E /* AgendaView.swift */,
 				3DAFC80D2A2640EB00A0C41A /* CoreML */,
 				3DB11E4C299543D9001DDB02 /* RoboNexus */,
 				3D943E642AFBD248009EF365 /* MatchUpdates */,
@@ -244,6 +246,8 @@
 		3DB11E4C299543D9001DDB02 /* RoboNexus */ = {
 			isa = PBXGroup;
 			children = (
+				D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */,
+				D4BBB7312D809D16004E4E6E /* AgendaView.swift */,
 				D4A08B632D5A7B330088CDAC /* ConfigManger.swift */,
 				D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */,
 				D4C6BFC92CD2732F0034C350 /* AutonomousFlightSkillsCalculator.swift */,
@@ -485,6 +489,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4AB4E7D2D93303A00218475 /* DataExporter.swift in Sources */,
 				D4C6BFC82CD270B70034C350 /* ScoreCalculatorsHome.swift in Sources */,
 				D4F084AB2CA47E9E0032E72D /* WorldSkillsRankings.swift in Sources */,
 				D4BBB7322D809D22004E4E6E /* AgendaView.swift in Sources */,
@@ -507,6 +512,7 @@
 				D4F084752CA47C230032E72D /* TeamInfoView.swift in Sources */,
 				D4F084762CA47C230032E72D /* EventView.swift in Sources */,
 				D4F084772CA47C230032E72D /* EventInformation.swift in Sources */,
+				D4AB4E7A2D931F6600218475 /* MatchScoreEntry.swift in Sources */,
 				D4F084782CA47C230032E72D /* EventTeams.swift in Sources */,
 				D4F084792CA47C230032E72D /* EventTeamView.swift in Sources */,
 				D4C6BFCA2CD273300034C350 /* AutonomousFlightSkillsCalculator.swift in Sources */,
@@ -740,7 +746,7 @@
 				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 92S72MX2PG;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -795,7 +801,7 @@
 				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 92S72MX2PG;
 				ENABLE_HARDENED_RUNTIME = YES;

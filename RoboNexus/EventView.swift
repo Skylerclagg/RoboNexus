@@ -227,7 +227,9 @@ struct EventView: View {
                     .font(.system(size: 19))
                     .foregroundColor(settings.topBarContentColor())
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
+            // Using a ToolbarItemGroup for trailing items so both buttons appear.
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                // Favorites toggle button.
                 Button(action: {
                     if favorites.favoriteEvents.contains(event.sku) {
                         favorites.removeEvent(event.sku)
@@ -245,7 +247,7 @@ struct EventView: View {
                             .foregroundColor(settings.topBarContentColor())
                     }
                 })
-            }
+                            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(settings.tabColor(), for: .navigationBar)
@@ -255,9 +257,11 @@ struct EventView: View {
 
 struct EventView_Previews: PreviewProvider {
     static var previews: some View {
-        EventView(event: Event(), team: nil)
-            .environmentObject(FavoriteStorage())
-            .environmentObject(UserSettings())
-            .environmentObject(ADCHubDataController())
+        NavigationView {
+            EventView(event: Event(), team: nil)
+                .environmentObject(FavoriteStorage())
+                .environmentObject(UserSettings())
+                .environmentObject(ADCHubDataController())
+        }
     }
 }

@@ -240,6 +240,20 @@ public class ADCHubAPI {
         return data
     }
     
+    public static func teamMatchesForSeason(teamID: Int, season: Int) -> [[String: Any]] {
+        // Build the endpoint URL using teamID.
+        let endpoint = "/teams/\(teamID)/matches"
+        
+        // Set up the parameters using the required key.
+        let params: [String: Any] = ["season[]": season]
+        
+        // Use the existing robotevents_request helper to perform the request (handles pagination).
+        let matchesData = robotevents_request(request_url: endpoint, params: params)
+        
+        return matchesData
+    }
+    
+    
     public static func robotevents_competition_scraper(params: [String: Any] = [:]) -> [String] {
         var request_url = "https://www.robotevents.com/robot-competitions/ADC"
         var params = params

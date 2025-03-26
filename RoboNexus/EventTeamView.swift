@@ -23,6 +23,7 @@ struct EventTeamView: View {
     @State var division: Division?
     @State var teamNumber: String
     @State var selectedView = 0
+    @State private var selected_season: Int = API.selected_season_id()
     
     init(teams_map: Binding<[String: String]>, event: Event, teamNumber: String, division: Division? = nil) {
         self._teams_map = teams_map
@@ -46,7 +47,7 @@ struct EventTeamView: View {
                 Spacer()
             }
             else if selectedView == (UserSettings.getMatchTeamDefaultPage() == "statistics" ? 0 : 1) {
-                TeamLookup(team_number: teamNumber, editable: false, fetch: true)
+                TeamLookup(team_number: teamNumber, editable: false, fetch: true, selectedSeason: selected_season)
                     .environmentObject(settings)
                     .environmentObject(dataController)
             }

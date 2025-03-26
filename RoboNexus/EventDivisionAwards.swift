@@ -11,7 +11,7 @@
 
 import SwiftUI
 
-private let allAroundEligibilityFeaturesEnabled: Bool = true
+private let allAroundEligibilityFeaturesEnabled: Bool = false
 private let excellenceEligibilityFeaturesEnabled: Bool = true
 
 // MARK: - Helper Structure for Precomputed Values (ADC & Excellence flows)
@@ -232,28 +232,39 @@ struct EligibleTeamDetailsView: View {
 }
 
 // MARK: - Requirements Sheet View
-struct RequirementsView: View {
+struct ExcellenceRequirementsView: View {
+    @EnvironmentObject var settings: UserSettings
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 10) {
-                Text("Requirements:")
-                    .font(.headline)
-                    .padding(.bottom, 5)
-                BulletList(listItems: [
-                    "Be ranked in the top 50% of qualification rankings at the conclusion of qualifying teamwork matches.",
-                    "Be ranked in the top 50% of overall skills rankings at the conclusion of autonomous flight and piloting skills matches.",
-                    "Participation in both the Piloting Skills Mission and the Autonomous Flight Skills Mission is required, with a score of greater than 0 in each Mission."
-                ], listItemSpacing: 10)
+                    BulletList(listItems: [
+                        "Be ranked in the top 40% of qualification rankings at the conclusion of Qualification matches.",
+                        "At the conclusion of the Robot Skills Challenge matches, be ranked in the top 40% of teams* at the event.",
+                        "At the conclusion of the Autonomous Coding Skills Challenge matches, be ranked in the top 40% of teams* at the event with a score above zero.",
+                        "*For events with a single Excellence Award, percentages are based on the number of teams at the event. For blended grade level events with two grade specific Excellence Awards, percentages are based on the teams in each grade level for each award."
+                    ], listItemSpacing: 10)
                 Spacer()
             }
             .padding()
-            .navigationBarTitle("Requirements", displayMode: .inline)
-            .navigationBarItems(trailing: Button("Done") {
-                // Dismissal handled by presenting view.
-            })
         }
     }
 }
+struct AllAroundChampionRequirementsView: View {
+    var body: some View {
+            NavigationView {
+                VStack(alignment: .leading, spacing: 10) {
+                    BulletList(listItems: [
+                        "Be ranked in the top 50% of qualification rankings at the conclusion of qualifying teamwork matches.",
+                        "Be ranked in the top 50% of overall skills rankings at the conclusion of autonomous flight and piloting skills matches.",
+                        "Participation in both the Piloting Skills Mission and the Autonomous Flight Skills Mission is required, with a score of greater than 0 in each Mission."
+                    ], listItemSpacing: 10)
+                    Spacer()
+                }
+                .padding()
+            }
+        }
+    }
+
 
 // MARK: - Subviews for Excellence Eligibility
 struct EligibleTeamRow: View {
@@ -428,15 +439,18 @@ struct ExcellenceEligibleTeams: View {
     let middleSchool: Bool
     let excellenceOffered: Bool
     let middleSchoolExcellenceOffered: Bool
+    @EnvironmentObject var settings: UserSettings
     @State var eligible_teams: [Team] = []
     @State var ineligibleTeams: [Team] = []
     @State var ineligibleTeamsReasons: [Int: [String]] = [:]
-    // Create a separate dictionary for eligible teams’ precomputed values.
+    // Separate dictionaries for precomputed values.
     @State var precomputedEligible: [Int: PrecomputedValues] = [:]
-    // This dictionary remains for ineligible teams.
     @State var precomputedIneligible: [Int: PrecomputedValues] = [:]
     @State var showLoading = true
     @State var division: Division
+    @State var selectedGradeCategory: String = "Middle School"
+    
+    @State var showRequirementsSheet = false
 
     // MARK: - Helper Functions
     func generate_location(team: Team) -> String {
@@ -444,7 +458,6 @@ struct ExcellenceEligibleTeams: View {
         return parts.joined(separator: ", ")
     }
     
-    /// Fetches and processes ranking and skills data asynchronously for Excellence eligibility.
     func fetch_info_excellence() {
         DispatchQueue.global(qos: .userInteractive).async { [self] in
             guard !(event.rankings[division] ?? []).isEmpty, !event.skills_rankings.isEmpty else {
@@ -454,9 +467,16 @@ struct ExcellenceEligibleTeams: View {
             
             let awardsForDivision = event.awards[division] ?? []
             let excellenceAwards = awardsForDivision.filter { $0.title.contains("Excellence Award") }
-            let hasMiddleSchoolAward = excellenceAwards.contains { $0.title.contains("Middle School") }
-            let hasHighSchoolAward = excellenceAwards.contains { $0.title.contains("High School") }
-            let isCombinedAward = !(hasMiddleSchoolAward && hasHighSchoolAward)
+            let isCombinedAward: Bool
+            if settings.selectedProgram == "VEX IQ Robotics Competition" {
+                // For IQ events, check for an "Elementary" award label.
+                let hasElementaryAward = excellenceAwards.contains { $0.title.contains("Elementary") }
+                isCombinedAward = !hasElementaryAward
+            } else {
+                let hasMiddleSchoolAward = excellenceAwards.contains { $0.title.contains("Middle School") }
+                let hasHighSchoolAward = excellenceAwards.contains { $0.title.contains("High School") }
+                isCombinedAward = !(hasMiddleSchoolAward && hasHighSchoolAward)
+            }
             let THRESHOLD = 0.4
             
             var eligible_teams_local = [Team]()
@@ -466,6 +486,8 @@ struct ExcellenceEligibleTeams: View {
             precomputedIneligible = [:]
             
             if isCombinedAward {
+                // Combined award: no grade split.
+                // Use the unfiltered rankings.
                 let qualifierRankings = event.rankings[division] ?? []
                 let ranking_cutoff = max(1, Int((Double(qualifierRankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
                 let sortedRankings = qualifierRankings.sorted { $0.rank < $1.rank }
@@ -475,24 +497,39 @@ struct ExcellenceEligibleTeams: View {
                 let overall_skills_sorted = overall_skills_rankings.sorted { $0.rank < $1.rank }
                 let overall_skills_cutoff = max(1, Int((Double(qualifierRankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
                 
+                // NEW: Compute autonomous skills rankings (assuming programming_score reflects autonomous performance)
+                let autoSkillsRankings = event.skills_rankings.filter { ranking in
+                    // Only include teams with a positive programming score.
+                    return ranking.programming_score > 0
+                }
+                let autoSkills_sorted = autoSkillsRankings.sorted { $0.rank < $1.rank }
+                let autoSkills_cutoff = max(1, Int((Double(qualifierRankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
+                
                 print("Combined Award - Total Qualifier Rankings: \(qualifierRankings.count), ranking_cutoff: \(ranking_cutoff)")
                 print("Combined Award - Overall skills cutoff: \(overall_skills_cutoff)")
+                print("Combined Award - Total Auto Skills Rankings: \(autoSkillsRankings.count), autoSkills_cutoff: \(autoSkills_cutoff)")
                 
                 for team in event.teams {
                     var reasons = [String]()
                     let programmingRanking = event.skills_rankings.first(where: { $0.team.id == team.id })
-                    let hasProgrammingScore = programmingRanking?.programming_score ?? 0 > 0
+                    let hasProgrammingScore = (programmingRanking?.programming_score ?? 0) > 0
                     let hasDriverScore = event.skills_rankings.contains { $0.team.id == team.id && $0.driver_score > 0 }
                     let isInRankingCutoff = rankings_teams.contains(where: { $0.id == team.id })
                     
+                    let qualifierRankComputed: Int = {
+                        if let index = sortedRankings.firstIndex(where: { $0.team.id == team.id }) {
+                            return index + 1
+                        }
+                        return -1
+                    }()
                     let skillsRankComputed: Int = {
                         if let index = overall_skills_sorted.firstIndex(where: { $0.team.id == team.id }) {
                             return index + 1
                         }
                         return -1
                     }()
-                    let qualifierRankComputed: Int = {
-                        if let index = sortedRankings.firstIndex(where: { $0.team.id == team.id }) {
+                    let autoSkillsRankComputed: Int = {
+                        if let index = autoSkills_sorted.firstIndex(where: { $0.team.id == team.id }) {
                             return index + 1
                         }
                         return -1
@@ -511,12 +548,16 @@ struct ExcellenceEligibleTeams: View {
                         skillsData: skillsDataComputed
                     )
                     
-                    print("Team \(team.number) (Combined): qualifierRank=\(qualifierRankComputed) / \(ranking_cutoff), skillsRank=\(skillsRankComputed) / \(overall_skills_cutoff)")
+                    print("Team \(team.number) (Combined): qualifierRank=\(qualifierRankComputed)/\(ranking_cutoff), skillsRank=\(skillsRankComputed)/\(overall_skills_cutoff), autoSkillsRank=\(autoSkillsRankComputed)/\(autoSkills_cutoff)")
                     
+                    // New eligibility condition: team must be within the qualifier cutoff,
+                    // have a programming score, have a driver score, be within the overall skills cutoff,
+                    // and also be within the top 40% of autonomous skills rankings.
                     if isInRankingCutoff &&
                         hasProgrammingScore &&
                         hasDriverScore &&
-                        (skillsRankComputed > 0 && skillsRankComputed <= overall_skills_cutoff) {
+                        (skillsRankComputed > 0 && skillsRankComputed <= overall_skills_cutoff) &&
+                        (autoSkillsRankComputed > 0 && autoSkillsRankComputed <= autoSkills_cutoff) {
                         eligible_teams_local.append(team)
                         precomputedEligible[team.id] = computedPre
                         print("Team \(team.number) marked ELIGIBLE")
@@ -548,6 +589,11 @@ struct ExcellenceEligibleTeams: View {
                         } else if skillsRankComputed > overall_skills_cutoff {
                             reasons.append("- Skills Ranking: \(skillsRankComputed) (cutoff: \(overall_skills_cutoff))")
                         }
+                        if autoSkillsRankComputed == -1 {
+                            reasons.append("- Not in autonomous Rankings")
+                        } else if autoSkillsRankComputed > autoSkills_cutoff {
+                            reasons.append("- Autonomous Skills Ranking: \(autoSkillsRankComputed) (cutoff: \(autoSkills_cutoff))")
+                        }
                         
                         ineligibleTeams_local.append(team)
                         ineligibleTeamsReasons_local[team.id] = reasons
@@ -555,38 +601,51 @@ struct ExcellenceEligibleTeams: View {
                         print("Team \(team.number) marked INELIGIBLE: \(reasons.joined(separator: ", "))")
                     }
                 }
+                
+                DispatchQueue.main.async {
+                    self.eligible_teams = eligible_teams_local
+                    self.ineligibleTeams = ineligibleTeams_local
+                    self.ineligibleTeamsReasons = ineligibleTeamsReasons_local
+                    self.showLoading = false
+                }
+
             } else {
                 // Split award: separate by grade.
-                let grade = middleSchool ? "Middle School" : "High School"
+                // Now we support three grade levels. Assume selectedGradeCategory is set to "Elementary", "Middle School", or "High School".
+                let grade = selectedGradeCategory
+                
                 let qualifierRankings = event.rankings[division] ?? []
-                // Filter qualifier rankings by grade.
+                // Filter qualifier rankings by grade using a case-insensitive containment check.
                 let gradeQualifierRankings = qualifierRankings.filter {
                     if let t = event.get_team(id: $0.team.id) {
-                        return grade == "Middle School" ? (t.grade == "Middle School") : (t.grade != "Middle School")
+                        // Instead of strict equality, use localizedCaseInsensitiveContains.
+                        return t.grade.localizedCaseInsensitiveContains(grade)
                     }
                     return false
                 }
+
                 let ranking_cutoff = max(1, Int((Double(gradeQualifierRankings.count) * THRESHOLD).rounded(.toNearestOrAwayFromZero)))
                 let sortedRankings = gradeQualifierRankings.sorted { $0.rank < $1.rank }
                 let rankings_teams = sortedRankings.prefix(ranking_cutoff).map { $0.team }
                 
-                // Filter skills rankings by grade.
+                // Filter skills rankings by grade using a case-insensitive containment check.
                 let gradeSkillsRankings = event.skills_rankings.filter {
                     if let t = event.get_team(id: $0.team.id) {
-                        return grade == "Middle School" ? (t.grade == "Middle School") : (t.grade != "Middle School")
+                        return t.grade.localizedCaseInsensitiveContains(grade)
                     }
                     return false
                 }
+
                 let skillsCutoff = ranking_cutoff  // cutoff based on grade-specific qualifier rankings
                 let sortedSkillsRankings = gradeSkillsRankings.sorted { $0.rank < $1.rank }
                 
                 print("Split Award (\(grade)) - Total qualifier rankings: \(gradeQualifierRankings.count), cutoff: \(ranking_cutoff)")
                 print("Split Award (\(grade)) - Skills cutoff: \(skillsCutoff)")
                 
-                for team in event.teams where (event.get_team(id: team.id)?.grade ?? "") == grade {
+                for team in event.teams where (event.get_team(id: team.id)?.grade.localizedCaseInsensitiveContains(grade) ?? false) {
                     var reasons = [String]()
                     let programmingRanking = event.skills_rankings.first(where: { $0.team.id == team.id })
-                    let hasProgrammingScore = programmingRanking?.programming_score ?? 0 > 0
+                    let hasProgrammingScore = (programmingRanking?.programming_score ?? 0) > 0
                     let hasDriverScore = event.skills_rankings.contains { $0.team.id == team.id && $0.driver_score > 0 }
                     let isInRankingCutoff = rankings_teams.contains(where: { $0.id == team.id })
                     
@@ -619,7 +678,7 @@ struct ExcellenceEligibleTeams: View {
                     print("Team \(team.number) (\(grade)): qualifierRank=\(qualifierRankComputed)/\(ranking_cutoff), skillsRank=\(skillsRankComputed)/\(skillsCutoff)")
                     
                     // Check eligibility: must be in qualifier cutoff, have programming score,
-                    // and skills rank must be valid.
+                    // and its skills rank must be within cutoff.
                     if isInRankingCutoff && hasProgrammingScore {
                         if skillsRankComputed == -1 {
                             reasons.append("- Not in skills Rankings")
@@ -686,29 +745,125 @@ struct ExcellenceEligibleTeams: View {
                     .navigationBarTitle("Excellence Eligibility", displayMode: .inline)
             } else {
                 List {
-                    // Pass the eligible teams' precomputed values to the section.
-                    EligibleTeamsSectionExcellence(
-                        eligibleTeams: eligible_teams,
-                        event: event,
-                        division: division,
-                        precomputedExcellence: precomputedEligible, // Use eligible dictionary here
-                        generateLocation: { team in generate_location(team: team) }
-                    )
+                    // Eligible Teams Section: use the precomputedEligible dictionary in the NavigationLink.
+                    Section(header: Text("Eligible Teams")) {
+                        if eligible_teams.isEmpty {
+                            Text("No eligible teams")
+                        } else {
+                            ForEach(eligible_teams, id: \.id) { team in
+                                NavigationLink(destination: EligibleTeamDetailsView(
+                                    event: event,
+                                    division: division,
+                                    team: team,
+                                    precomputed: precomputedEligible[team.id] ?? PrecomputedValues(
+                                        qualifierRank: -1,
+                                        qualifierCutoff: 1,
+                                        skillsRank: -1,
+                                        skillsCutoff: 1,
+                                        skillsData: (0,0,0,0)
+                                    )
+                                )) {
+                                    HStack {
+                                        Text(team.number)
+                                            .font(.system(size: 20))
+                                            .frame(width: 80, alignment: .leading)
+                                            .bold()
+                                        VStack(alignment: .leading) {
+                                            Text(team.name)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .frame(height: 20)
+                                            Spacer().frame(height: 5)
+                                            Text(generate_location(team: team))
+                                                .font(.system(size: 11))
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     
-                    // Ineligible Teams Section (unchanged)
-                    IneligibleTeamsSectionExcellence(
-                        ineligibleTeams: ineligibleTeams,
-                        ineligibleTeamsReasons: ineligibleTeamsReasons,
-                        precomputedExcellence: precomputedIneligible,
-                        generateLocation: { team in generate_location(team: team) }
-                    )
+                    // Ineligible Teams Section remains unchanged.
+                    Section(header: Text("Ineligible Teams")) {
+                        if ineligibleTeams.isEmpty {
+                            Text("All teams that meet the grade requirement are eligible.")
+                        } else {
+                            ForEach(ineligibleTeams, id: \.id) { team in
+                                if let pre = precomputedIneligible[team.id] {
+                                    NavigationLink(destination: ADCIneligibilityReasonsView(
+                                        team: team,
+                                        reasons: ineligibleTeamsReasons[team.id] ?? [],
+                                        qualifierRank: pre.qualifierRank,
+                                        qualifierCutoff: pre.qualifierCutoff,
+                                        skillsRank: pre.skillsRank,
+                                        skillsCutoff: pre.skillsCutoff,
+                                        skillsData: pre.skillsData
+                                    )) {
+                                        HStack {
+                                            Text(team.number)
+                                                .font(.system(size: 20))
+                                                .frame(width: 80, alignment: .leading)
+                                                .bold()
+                                            VStack(alignment: .leading) {
+                                                Text(team.name)
+                                                Spacer().frame(height: 5)
+                                                Text(generate_location(team: team))
+                                                    .font(.system(size: 11))
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    NavigationLink(destination: ADCIneligibilityReasonsView(
+                                        team: team,
+                                        reasons: ineligibleTeamsReasons[team.id] ?? [],
+                                        qualifierRank: -1,
+                                        qualifierCutoff: 1,
+                                        skillsRank: -1,
+                                        skillsCutoff: 1,
+                                        skillsData: (0, 0, 0, 0)
+                                    )) {
+                                        HStack {
+                                            Text(team.number)
+                                                .font(.system(size: 20))
+                                                .frame(width: 80, alignment: .leading)
+                                                .bold()
+                                            VStack(alignment: .leading) {
+                                                Text(team.name)
+                                                Spacer().frame(height: 5)
+                                                Text(generate_location(team: team))
+                                                    .font(.system(size: 11))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 .listStyle(InsetGroupedListStyle())
                 .navigationBarTitle("Excellence Eligibility", displayMode: .inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showRequirementsSheet = true }) {
+                            Image(systemName: "info.circle")
+                                .imageScale(.large)
+                        }
+                    }
+                }
+                .sheet(isPresented: $showRequirementsSheet) {
+                    NavigationView {
+                        ExcellenceRequirementsView()
+                            .navigationBarTitle("Excellence Requirements:", displayMode: .inline)
+                            .navigationBarItems(trailing: Button("Done") {
+                                showRequirementsSheet = false
+                            })
+                    }
+                }
             }
         }
     }
 }
+
 
 // MARK: - AllAroundChampionEligibleTeams View
 struct AllAroundChampionEligibleTeams: View {
@@ -1109,7 +1264,8 @@ struct AllAroundChampionEligibleTeams: View {
                 }
                 .sheet(isPresented: $showRequirementsSheet) {
                     NavigationView {
-                        RequirementsView()
+                        AllAroundChampionRequirementsView()
+                            .navigationBarTitle("All Around Champion Requirements:", displayMode: .inline)
                             .navigationBarItems(trailing: Button("Done") {
                                 showRequirementsSheet = false
                             })
@@ -1125,11 +1281,146 @@ struct AllAroundChampionEligibleTeams: View {
 enum EligibilitySheet: String, Identifiable {
     case adcMiddle = "ADC-Middle"
     case adcHigh = "ADC-High"
+    case excellenceElementary = "Excellence-Elementary"
     case excellenceMiddle = "Excellence-Middle"
     case excellenceHigh = "Excellence-High"
     
     var id: String { self.rawValue }
 }
+// MARK: Award Row View - used to break up the Award view
+struct AwardRowView: View {
+    let award: DivisionalAward
+    let event: Event
+    let division: Division
+    let settings: UserSettings
+    // Bindings needed for sheet presentation:
+    @Binding var selectedEligibilitySheet: EligibilitySheet?
+    @Binding var middleSchoolAllAroundChampionOffered: Bool
+    @Binding var allAroundChampionOffered: Bool
+    @Binding var middleSchoolExcellenceOffered: Bool
+    @Binding var excellenceOffered: Bool
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Text(award.title)
+                Spacer()
+                if !award.qualifications.isEmpty {
+                    Menu {
+                        Text("Qualifies for:")
+                        ForEach(award.qualifications, id: \.self) { qual in
+                            Text(qual)
+                        }
+                    } label: {
+                        Image(systemName: "globe.americas")
+                    }
+                    .tint(settings.buttonColor())
+                }
+            }
+            // ADC eligibility button branch
+            if allAroundEligibilityFeaturesEnabled &&
+                award.teams.isEmpty &&
+                award.title.contains("All-Around Champion") &&
+                !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
+                Spacer().frame(height: 5)
+                Button("Show Eligible Teams") {
+                    if award.title.contains("Middle") {
+                        selectedEligibilitySheet = .adcMiddle
+                        print("ADC Button tapped, selectedEligibilitySheet: \(selectedEligibilitySheet!.rawValue)")
+                    } else {
+                        selectedEligibilitySheet = .adcHigh
+                        print("ADC Button tapped, selectedEligibilitySheet: \(selectedEligibilitySheet!.rawValue)")
+                    }
+                }
+                .foregroundColor(settings.buttonColor())
+                .font(.system(size: 14))
+                .onAppear {
+                    if award.title.contains("Middle") {
+                        middleSchoolAllAroundChampionOffered = true
+                        print("Middle School All Around Champion Award offered")
+                    } else {
+                        allAroundChampionOffered = true
+                        print("All Around Champion Award offered")
+                    }
+                }
+            }
+            // Excellence eligibility button branch
+            else if excellenceEligibilityFeaturesEnabled &&
+                    award.teams.isEmpty &&
+                    award.title.contains("Excellence Award") &&
+                    !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
+                Spacer().frame(height: 5)
+                Button("Show Eligible Teams") {
+                    print("Excellence eligible teams button tapped")
+                    if settings.selectedProgram == "VEX IQ Robotics Competition" {
+                        if award.title.contains("Elementary") {
+                            selectedEligibilitySheet = .excellenceElementary
+                            print("Set selectedEligibilitySheet to Excellence-Elementary")
+                        } else if award.title.contains("Middle") {
+                            selectedEligibilitySheet = .excellenceMiddle
+                            print("Set selectedEligibilitySheet to Excellence-Middle")
+                        } else {
+                            selectedEligibilitySheet = .excellenceHigh
+                            print("Set selectedEligibilitySheet to Excellence-High")
+                        }
+                    } else {
+                        if award.title.contains("Middle") {
+                            selectedEligibilitySheet = .excellenceMiddle
+                            print("Set selectedEligibilitySheet to Excellence-Middle")
+                        } else {
+                            selectedEligibilitySheet = .excellenceHigh
+                            print("Set selectedEligibilitySheet to Excellence-High")
+                        }
+                    }
+                }
+                .foregroundColor(settings.buttonColor())
+                .font(.system(size: 14))
+                .onAppear {
+                    if settings.selectedProgram == "VEX IQ Robotics Competition" {
+                        if award.title.contains("Elementary") {
+                            print("Elementary Excellence Award offered")
+                        } else if award.title.contains("Middle") {
+                            middleSchoolExcellenceOffered = true
+                            print("Middle School Excellence Award offered")
+                        } else {
+                            excellenceOffered = true
+                            print("High School Excellence Award offered")
+                        }
+                    } else {
+                        if award.title.contains("Middle") {
+                            middleSchoolExcellenceOffered = true
+                            print("Middle School Excellence Award offered")
+                        } else {
+                            excellenceOffered = true
+                            print("High School Excellence Award offered")
+                        }
+                    }
+                }
+            }
+            // Otherwise, show existing teams.
+            else if !award.teams.isEmpty {
+                Spacer().frame(height: 5)
+                ForEach(award.teams.indices, id: \.self) { j in
+                    HStack {
+                        Text(award.teams[j].number)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .frame(width: 60)
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                            .bold()
+                        Text(award.teams[j].name)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
 
 // MARK: - EventDivisionAwards View
 struct EventDivisionAwards: View {
@@ -1150,6 +1441,7 @@ struct EventDivisionAwards: View {
     
     // Excellence Eligibility state variables
     @State var showingExcellenceEligibility = false
+    @State var showingElementaryExcellenceEligibility = false
     @State var showingMiddleSchoolExcellenceEligibility = false
     @State var excellenceOffered = false
     @State var middleSchoolExcellenceOffered = false
@@ -1175,118 +1467,58 @@ struct EventDivisionAwards: View {
         }
     }
     
+    private var awardsContent: some View {
+        if showLoading {
+            return AnyView(ProgressView().padding())
+        } else if (event.awards[division] ?? []).isEmpty {
+            return AnyView(NoData())
+        } else if let awardsArray = event.awards[division] {
+            return AnyView(
+                List {
+                    ForEach(awardsArray.indices, id: \.self) { i in
+                        AwardRowView(
+                            award: awardsArray[i],
+                            event: event,
+                            division: division,
+                            settings: settings,
+                            selectedEligibilitySheet: $selectedEligibilitySheet,
+                            middleSchoolAllAroundChampionOffered: $middleSchoolAllAroundChampionOffered,
+                            allAroundChampionOffered: $allAroundChampionOffered,
+                            middleSchoolExcellenceOffered: $middleSchoolExcellenceOffered,
+                            excellenceOffered: $excellenceOffered
+                        )
+                    }
+                }
+                .listStyle(InsetGroupedListStyle())
+                .navigationBarTitle("All-Around Champion Eligibility", displayMode: .inline)
+            )
+        } else {
+            return AnyView(Text("No awards available"))
+        }
+    }
+
     var body: some View {
         NavigationView {
             VStack {
-                if showLoading {
-                    ProgressView()
-                        .padding()
-                    Spacer()
-                } else if (event.awards[division] ?? [DivisionalAward]()).isEmpty {
-                    NoData()
-                } else {
-                    if let awardsArray = event.awards[division] {
-                        List {
-                            ForEach(awardsArray.indices, id: \.self) { i in
-                                VStack(alignment: .leading) {
-                                    HStack {
-                                        Text(awardsArray[i].title)
-                                        Spacer()
-                                        if !awardsArray[i].qualifications.isEmpty {
-                                            Menu {
-                                                Text("Qualifies for:")
-                                                ForEach(awardsArray[i].qualifications, id: \.self) { qual in
-                                                    Text(qual)
-                                                }
-                                            } label: {
-                                                Image(systemName: "globe.americas")
-                                            }
-                                            .tint(settings.buttonColor())
-                                        }
-                                    }
-                                    // ADC eligibility button branch.
-                                    if allAroundEligibilityFeaturesEnabled &&
-                                        //awardsArray[i].teams.isEmpty &&
-                                        awardsArray[i].title.contains("All-Around Champion") &&
-                                       !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
-                                        Spacer().frame(height: 5)
-                                        Button("Show Eligible Teams") {
-                                            if awardsArray[i].title.contains("Middle") {
-                                                selectedEligibilitySheet = .adcMiddle
-                                                print("ADC Button tapped, selectedEligibilitySheet: \(selectedEligibilitySheet!.rawValue)")
-                                            } else {
-                                                selectedEligibilitySheet = .adcHigh
-                                                print("ADC Button tapped, selectedEligibilitySheet: \(selectedEligibilitySheet!.rawValue)")
-                                            }
-                                        }
-                                        .foregroundColor(settings.buttonColor())
-                                        .font(.system(size: 14))
-                                        .onAppear {
-                                            if awardsArray[i].title.contains("Middle") {
-                                                middleSchoolAllAroundChampionOffered = true
-                                                print("Middle School All Around Champion Award offered")
-                                            } else {
-                                                allAroundChampionOffered = true
-                                                print("All Around Champion Award offered")
-                                            }
-                                        }
-                                    }
-                                    // Excellence eligibility button branch.
-                                    else if excellenceEligibilityFeaturesEnabled &&
-                                            //awardsArray[i].teams.isEmpty &&
-                                            awardsArray[i].title.contains("Excellence Award") &&
-                                            !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
-                                        Spacer().frame(height: 5)
-                                        Button("Show Eligible Teams") {
-                                            print("Excellence eligible teams button tapped")
-                                            if awardsArray[i].title.contains("Middle") {
-                                                selectedEligibilitySheet = .excellenceMiddle
-                                                print("Set selectedEligibilitySheet to Excellence-Middle")
-                                            } else {
-                                                selectedEligibilitySheet = .excellenceHigh
-                                                print("Set selectedEligibilitySheet to Excellence-High")
-                                            }
-                                        }
-                                        .foregroundColor(settings.buttonColor())
-                                        .font(.system(size: 14))
-                                        .onAppear {
-                                            if awardsArray[i].title.contains("Middle") {
-                                                middleSchoolExcellenceOffered = true
-                                                print("Middle School Excellence Award offered")
-                                            } else {
-                                                excellenceOffered = true
-                                                print("High School Excellence Award offered")
-                                            }
-                                        }
-                                    }
-                                    // Otherwise, show existing teams.
-                                    else if !awardsArray[i].teams.isEmpty {
-                                        Spacer().frame(height: 5)
-                                        ForEach(awardsArray[i].teams.indices, id: \.self) { j in
-                                            HStack {
-                                                Text(awardsArray[i].teams[j].number)
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .frame(width: 60)
-                                                    .font(.system(size: 14))
-                                                    .foregroundColor(.secondary)
-                                                    .bold()
-                                                Text(awardsArray[i].teams[j].name)
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .font(.system(size: 14))
-                                                    .foregroundColor(.secondary)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                awardsContent
                 Spacer()
             }
         }
         .alert(item: $selectedEligibilitySheet) { sheet in
             switch sheet {
+            case .excellenceElementary:
+                    return Alert(
+                        title: Text("Disclaimer"),
+                        message: Text("This is Unofficial and may be inaccurate, and can only possibly be accurate after both Qualification and Skills matches finish. Please keep in mind that there are other factors that no app can calculate – this is solely based on field performance."),
+                        dismissButton: .default(Text("I Understand"), action: {
+                            print("Excellence Elementary alert dismissed. Scheduling sheet presentation...")
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                showingElementaryExcellenceEligibility = true
+                                print("Now showing Excellence Elementary eligibility sheet (flag set).")
+                            }
+                            selectedEligibilitySheet = nil
+                        })
+                    )
             case .excellenceMiddle:
                 return Alert(
                     title: Text("Disclaimer"),
@@ -1353,19 +1585,31 @@ struct EventDivisionAwards: View {
                                            allAroundChampionOffered: $allAroundChampionOffered,
                                            middleSchoolAllAroundChampionOffered: $middleSchoolAllAroundChampionOffered)
         }
+        .sheet(isPresented: $showingElementaryExcellenceEligibility){
+            ExcellenceEligibleTeams(event: event,
+                                    middleSchool: false,
+                                    excellenceOffered: excellenceOffered,
+                                    middleSchoolExcellenceOffered: middleSchoolExcellenceOffered,
+                                    division: division,
+                                    selectedGradeCategory: "Elementary")
+        }
         .sheet(isPresented: $showingMiddleSchoolExcellenceEligibility) {
             ExcellenceEligibleTeams(event: event,
                                     middleSchool: true,
                                     excellenceOffered: excellenceOffered,
                                     middleSchoolExcellenceOffered: middleSchoolExcellenceOffered,
-                                    division: division)
+                                    division: division,
+                                    selectedGradeCategory: "Middle School"
+            )
         }
         .sheet(isPresented: $showingExcellenceEligibility) {
             ExcellenceEligibleTeams(event: event,
                                     middleSchool: false,
                                     excellenceOffered: excellenceOffered,
                                     middleSchoolExcellenceOffered: middleSchoolExcellenceOffered,
-                                    division: division)
+                                    division: division,
+                                    selectedGradeCategory: "High School"
+            )
         }
         .task { fetch_awards() }
         .onAppear{

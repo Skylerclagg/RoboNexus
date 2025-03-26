@@ -81,7 +81,7 @@ struct Lookup: View {
                         Text("No seasons available")
                     }
                 }
-                TeamLookup(team_number: "", editable: true, fetch: false)
+                TeamLookup(team_number: "", editable: true, fetch: false, selectedSeason: selected_season)
                     .environmentObject(favorites)
                     .environmentObject(settings)
                     .environmentObject(dataController)
@@ -114,25 +114,36 @@ struct TeamLookup: View {
     @State private var team: Team = Team()
     @State private var world_skills = WorldSkills()
     @State private var avg_rank: Double = 0.0
-    @State private var award_counts = OrderedDictionary<String, Int>()
+    @State private var award_counts = OrderedCollections.OrderedDictionary<String, Int>()
     @State private var showLoading: Bool = false
     @State var editable: Bool = true
-    @State private var selected_season: Int = API.selected_season_id()
     
-    init(team_number: String = "", editable: Bool = true, fetch: Bool = false) {
+    // Use the season passed from the parent view.
+    @State private var selected_season: Int
+    
+    // New state variable for presenting the TeamworkMatchStatsSheet.
+    @State private var showTeamworkStatsSheet: Bool = false
+    
+    // Custom initializer to accept the selected season from the parent view.
+    init(team_number: String = "", editable: Bool = true, fetch: Bool = false, selectedSeason: Int) {
         self._team_number = State(initialValue: team_number)
         self._editable = State(initialValue: editable)
         self._fetch = State(initialValue: fetch)
+        self._selected_season = State(initialValue: selectedSeason)
     }
     
-    // Function to hide the keyboard (iOS only)
+    // Function to hide the keyboard (iOS only).
     func hideKeyboard() {
-        #if canImport(UIKit)
+    #if canImport(UIKit)
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                         to: nil, from: nil, for: nil)
-        #endif
+    #endif
     }
     
+    /**
+     Fetches team info and, if the selected program is ADC or Aerial Drone Competition,
+     fetches the team's match data (for later use in the stats sheet).
+     */
     func fetch_info(number: String) {
         hideKeyboard()
         showLoading = true
@@ -145,28 +156,32 @@ struct TeamLookup: View {
                 return
             }
             
+            // Fetch world skills and ranking.
             let fetched_world_skills = API.world_skills_for(team: fetched_team) ?? WorldSkills(team: fetched_team, data: [:])
             let fetched_avg_rank = fetched_team.average_ranking()
             fetched_team.fetch_awards()
             fetched_team.awards.sort(by: { $0.order < $1.order })
             
-            // NOTE: We now check the new program-based favorites approach
+            // Check favorite status.
             let is_favorited = favorites.favoriteTeams.contains(fetched_team.number)
             
             DispatchQueue.main.async {
                 team = fetched_team
                 world_skills = fetched_world_skills
                 avg_rank = fetched_avg_rank
-                award_counts = fetched_team.awards.reduce(into: OrderedDictionary<String, Int>()) { dict, award in
+                award_counts = fetched_team.awards.reduce(into: OrderedCollections.OrderedDictionary<String, Int>()) { dict, award in
                     dict[award.title, default: 0] += 1
                 }
                 favorited = is_favorited
                 showLoading = false
                 fetched = true
+                
+                // You can fetch match data here if needed, but the sheet will handle its own fetching.
             }
         }
     }
     
+    // MARK: - Helper for World Skills Data
     var worldSkillsData: (worldSkills: WorldSkills, teamsCount: Int) {
         let prog = settings.selectedProgram
         switch prog {
@@ -205,6 +220,7 @@ struct TeamLookup: View {
         }
     }
     
+    // MARK: - Team Page URL Helper
     var teamPageURL: URL? {
         let prog = settings.selectedProgram
         let base: String
@@ -221,9 +237,11 @@ struct TeamLookup: View {
         return URL(string: base + team.number)
     }
     
+    // MARK: - View Body
     var body: some View {
         VStack {
             HStack {
+                // Display a link icon that opens the team page if available.
                 if fetched && team.id != 0, let url = teamPageURL {
                     Link(destination: url) {
                         Image(systemName: "link")
@@ -232,26 +250,21 @@ struct TeamLookup: View {
                             .opacity(fetched ? 1 : 0)
                     }
                 }
-                
-                // Wrap the TextField in a ZStack to overlay a custom placeholder.
+                // Use a ZStack to overlay a custom placeholder on the TextField.
                 ZStack {
-                    // Show custom placeholder only when team_number is empty.
                     if team_number.isEmpty {
                         HStack(spacing: 8) {
-                            // Magnifying glass icon.
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(.gray)
                                 .font(.system(size: 36))
-                            // Placeholder text.
                             Text("12345a")
                                 .foregroundColor(.gray)
                                 .font(.system(size: 36))
                         }
-                        // Underline the placeholder (both text and icon).
                         .underline()
                     }
-                    // The actual TextField with an empty placeholder string.
                     TextField("", text: $team_number, onEditingChanged: { _ in
+                        // Reset values when editing begins.
                         team = Team()
                         world_skills = WorldSkills(team: Team())
                         avg_rank = 0.0
@@ -259,6 +272,7 @@ struct TeamLookup: View {
                         favorited = false
                         showLoading = false
                     }, onCommit: {
+                        // Fetch team info on commit.
                         showLoading = true
                         fetch_info(number: team_number)
                     })
@@ -273,7 +287,7 @@ struct TeamLookup: View {
                     }
                 }
                 
-                // Toggle favorite status using the new program-based approach.
+                // Favorite button toggles favorite status.
                 Button(action: {
                     guard !team_number.isEmpty else { return }
                     showLoading = true
@@ -303,7 +317,7 @@ struct TeamLookup: View {
                             .font(.system(size: 25))
                     }
                 })
-                .padding(20)
+                .padding(15)
             }
         }
         
@@ -313,6 +327,7 @@ struct TeamLookup: View {
             }
         }
         .frame(height: 10)
+        
         List {
             Group {
                 HStack {
@@ -320,7 +335,7 @@ struct TeamLookup: View {
                     Spacer()
                     Text(team.name)
                 }
-                // Dynamic label: "Drone Name" for ADC; "Robot Name" for other programs.
+                // Dynamic label: "Drone Name" for ADC/Aerial Drone, "Robot Name" otherwise.
                 HStack {
                     Text((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition")
                          ? "Drone Name"
@@ -328,7 +343,6 @@ struct TeamLookup: View {
                     Spacer()
                     Text(team.robot_name)
                 }
-                // Grade Level
                 HStack {
                     Text("Grade Level")
                     Spacer()
@@ -356,10 +370,10 @@ struct TeamLookup: View {
             }
             HStack {
                 Menu("World Skills Score") {
-                    Text("\(worldSkillsData.worldSkills.driver) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
-                    Text("\(worldSkillsData.worldSkills.programming) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
-                    Text("\(worldSkillsData.worldSkills.highest_driver) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
-                    Text("\(worldSkillsData.worldSkills.highest_programming) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
+                    Text("\(world_skills.driver) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
+                    Text("\(world_skills.programming) \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
+                    Text("\(world_skills.highest_driver) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Piloting" : "Driver")")
+                    Text("\(world_skills.highest_programming) Highest \((settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition") ? "Autonomous Flight" : "Programming")")
                 }
                 Spacer()
                 Text(fetched
@@ -376,6 +390,23 @@ struct TeamLookup: View {
                 }
                 Spacer()
                 Text(fetched && team.registered ? "\(team.awards.count)" : "")
+            }
+            // Replace the highest teamwork score row with a button that opens the stats sheet.
+            if settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition" || settings.selectedProgram == "VEX IQ Robotics Competition"{
+                Button(action: {
+                    showTeamworkStatsSheet = true
+                }) {
+                    HStack {
+                        Text("Teamwork Match Stats")
+                        Spacer()
+                        Image(systemName: "chart.bar.doc.horizontal")
+                    }
+                }
+                .sheet(isPresented: $showTeamworkStatsSheet) {
+                    TeamworkMatchStatsSheet(team: team, season: selected_season)
+                        .environmentObject(settings)
+                        .environmentObject(dataController)
+                }
             }
             if editable {
                 HStack {
