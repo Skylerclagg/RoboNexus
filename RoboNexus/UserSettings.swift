@@ -52,6 +52,19 @@ class UserSettings: ObservableObject {
     // ==============================
     @Published var enableHaptics = false  // Default OFF
     
+    
+    @Published var allAroundEligibilityFeaturesEnabled: Bool = defaults.bool(forKey: "allAroundEligibilityFeaturesEnabled") {
+        didSet {
+            // Save the new value every time it changes.
+            defaults.set(allAroundEligibilityFeaturesEnabled, forKey: "allAroundEligibilityFeaturesEnabled")
+        }
+    }
+    
+    @Published var testingEligibilityFeaturesEnabled: Bool = defaults.bool(forKey: "testingEligibilityFeaturesEnabled") {
+        didSet {
+            defaults.set(testingEligibilityFeaturesEnabled, forKey: "testingEligibilityFeaturesEnabled")
+        }
+    }
     private var buttonColorString: String
     private var topBarColorString: String
     private var topBarContentColorString: String
@@ -66,14 +79,16 @@ class UserSettings: ObservableObject {
     
     // ==============================
     // NEW: Program Selection
-    // We now expose the currently selected program as a published property.
-    // Changing this value will be persisted in UserDefaults.
     // ==============================
     @Published var selectedProgram: String
     
     static var keyIndex = Int.random(in: 0..<10)
     
     init() {
+        // Initialize the new property from UserDefaults.
+        // If no value exists, the default will be false.
+        self.allAroundEligibilityFeaturesEnabled = defaults.bool(forKey: "allAroundEligibilityFeaturesEnabled")
+        
         // Initialize colors and other settings from defaults or fall back to defaults.
         self.buttonColorString = defaults.object(forKey: "buttonColor") as? String
             ?? UIColor.StringFromUIColor(color: getGreen())
@@ -129,6 +144,9 @@ class UserSettings: ObservableObject {
         // NEW: Re-read haptics setting.
         self.enableHaptics = defaults.bool(forKey: "enableHaptics")
         self.dateFilter = defaults.integer(forKey: "dateFilter")
+        
+        // NEW: Re-read the All Around Eligibility toggle.
+        self.allAroundEligibilityFeaturesEnabled = defaults.bool(forKey: "allAroundEligibilityFeaturesEnabled")
     }
     
     func updateUserDefaults(updateTopBarContentColor: Bool = false) {
@@ -158,6 +176,9 @@ class UserSettings: ObservableObject {
         // NEW: Persist haptics setting.
         defaults.set(self.enableHaptics, forKey: "enableHaptics")
         defaults.set(self.dateFilter, forKey: "dateFilter")
+        
+        // NEW: Persist the All Around Eligibility toggle.
+        defaults.set(self.allAroundEligibilityFeaturesEnabled, forKey: "allAroundEligibilityFeaturesEnabled")
     }
     
     // MARK: - Setters

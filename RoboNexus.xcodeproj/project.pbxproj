@@ -21,6 +21,7 @@
 		D4A08B642D5A7B550088CDAC /* ConfigManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A08B632D5A7B330088CDAC /* ConfigManger.swift */; };
 		D4AB4E7A2D931F6600218475 /* MatchScoreEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */; };
 		D4AB4E7D2D93303A00218475 /* DataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F332FE2CA78AE300C7EE4F /* DataExporter.swift */; };
+		D4AE88C22DAD627300009F05 /* DeveloperModeSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AE88C12DAD626D00009F05 /* DeveloperModeSecurity.swift */; };
 		D4BBB7322D809D22004E4E6E /* AgendaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BBB7312D809D16004E4E6E /* AgendaView.swift */; };
 		D4BBB7352D809FD3004E4E6E /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = D4BBB7342D809FD3004E4E6E /* SwiftSoup */; };
 		D4C3DA7C2D03984300C6FFF9 /* StateRegionMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */; };
@@ -142,6 +143,7 @@
 		3DFB59C32C536BCC0061CE6C /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		D4A08B632D5A7B330088CDAC /* ConfigManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManger.swift; sourceTree = "<group>"; };
 		D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchScoreEntry.swift; sourceTree = "<group>"; };
+		D4AE88C12DAD626D00009F05 /* DeveloperModeSecurity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperModeSecurity.swift; sourceTree = "<group>"; };
 		D4BBB7312D809D16004E4E6E /* AgendaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgendaView.swift; sourceTree = "<group>"; };
 		D4C3DA7B2D03982D00C6FFF9 /* StateRegionMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRegionMapping.swift; sourceTree = "<group>"; };
 		D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotingSkillsCalculator.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 				3D01A8C229DF3D55000BBDEB /* EventDivisionRankings.swift */,
 				3D919AEE29F6F70C00E1724F /* EventSkillsRankings.swift */,
 				3D0BE6F829A3F0C700C3EA8A /* Lookup.swift */,
+				D4AE88C12DAD626D00009F05 /* DeveloperModeSecurity.swift */,
 			);
 			path = RoboNexus;
 			sourceTree = "<group>";
@@ -502,6 +505,7 @@
 				D4F0846C2CA47C230032E72D /* AppDelegate.swift in Sources */,
 				D4F0846D2CA47C230032E72D /* ADCHubApp.swift in Sources */,
 				D4E7F1D22CA4C267005886B7 /* TeamworkScoreCalculator.swift in Sources */,
+				D4AE88C22DAD627300009F05 /* DeveloperModeSecurity.swift in Sources */,
 				D4F0846E2CA47C230032E72D /* Shared.swift in Sources */,
 				D4F084702CA47C230032E72D /* UserSettings.swift in Sources */,
 				D4F084712CA47C230032E72D /* MatchRowView.swift in Sources */,
@@ -746,7 +750,7 @@
 				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 92S72MX2PG;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -776,7 +780,7 @@
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -801,7 +805,7 @@
 				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 92S72MX2PG;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -832,7 +836,7 @@
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";

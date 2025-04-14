@@ -11,7 +11,7 @@
 
 import SwiftUI
 
-private let allAroundEligibilityFeaturesEnabled: Bool = false
+// After: a computed property that checks the stored developer setting
 private let excellenceEligibilityFeaturesEnabled: Bool = true
 
 // MARK: - Helper Structure for Precomputed Values (ADC & Excellence flows)
@@ -1318,8 +1318,8 @@ struct AwardRowView: View {
                 }
             }
             // ADC eligibility button branch
-            if allAroundEligibilityFeaturesEnabled &&
-                award.teams.isEmpty &&
+            if settings.allAroundEligibilityFeaturesEnabled &&
+                (settings.testingEligibilityFeaturesEnabled || award.teams.isEmpty) &&
                 award.title.contains("All-Around Champion") &&
                 !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
                 Spacer().frame(height: 5)
@@ -1346,7 +1346,7 @@ struct AwardRowView: View {
             }
             // Excellence eligibility button branch
             else if excellenceEligibilityFeaturesEnabled &&
-                    award.teams.isEmpty &&
+                        (settings.testingEligibilityFeaturesEnabled || award.teams.isEmpty) &&
                     award.title.contains("Excellence Award") &&
                     !(event.rankings[division] ?? [TeamRanking]()).isEmpty {
                 Spacer().frame(height: 5)

@@ -110,7 +110,7 @@ struct TeamLookup: View {
     @State var team_number: String = ""
     @State var favorited: Bool = false
     @State var fetch: Bool = false
-    @State var fetched: Bool = false
+    @State var fetched: Bool = false // This flag indicates if the team search has completed
     @State private var team: Team = Team()
     @State private var world_skills = WorldSkills()
     @State private var avg_rank: Double = 0.0
@@ -152,6 +152,7 @@ struct TeamLookup: View {
         DispatchQueue.global(qos: .userInteractive).async {
             let fetched_team = Team(number: number)
             if fetched_team.id == 0 {
+                // If no valid team is found, stop the loader and exit.
                 DispatchQueue.main.async { showLoading = false }
                 return
             }
@@ -174,9 +175,9 @@ struct TeamLookup: View {
                 }
                 favorited = is_favorited
                 showLoading = false
-                fetched = true
+                fetched = true // Mark that team info has been fetched
                 
-                // You can fetch match data here if needed, but the sheet will handle its own fetching.
+                // Optionally, you can fetch match data here if needed
             }
         }
     }
@@ -268,11 +269,10 @@ struct TeamLookup: View {
                         team = Team()
                         world_skills = WorldSkills(team: Team())
                         avg_rank = 0.0
-                        fetched = false
+                        fetched = false // Reset fetched flag when starting to edit
                         favorited = false
                         showLoading = false
                     }, onCommit: {
-                        // Fetch team info on commit.
                         showLoading = true
                         fetch_info(number: team_number)
                     })
@@ -294,10 +294,12 @@ struct TeamLookup: View {
                     hideKeyboard()
                     team_number = team_number.uppercased()
                     
+                    // Refresh team info if the number has changed.
                     if team.number != team_number {
                         fetch_info(number: team_number)
                     }
                     
+                    // Toggle favorite status.
                     if favorites.favoriteTeams.contains(team.number) {
                         favorites.removeTeam(team.number)
                         favorited = false
@@ -391,9 +393,12 @@ struct TeamLookup: View {
                 Spacer()
                 Text(fetched && team.registered ? "\(team.awards.count)" : "")
             }
-            // Replace the highest teamwork score row with a button that opens the stats sheet.
-            if settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition" || settings.selectedProgram == "VEX IQ Robotics Competition"{
+            // Teamwork Match Stats button
+            if settings.selectedProgram == "ADC" ||
+               settings.selectedProgram == "Aerial Drone Competition" ||
+               settings.selectedProgram == "VEX IQ Robotics Competition" {
                 Button(action: {
+                    // Open the stats sheet when tapped.
                     showTeamworkStatsSheet = true
                 }) {
                     HStack {
@@ -402,6 +407,8 @@ struct TeamLookup: View {
                         Image(systemName: "chart.bar.doc.horizontal")
                     }
                 }
+                // Disable the button if no team info has been fetched.
+                .disabled(!fetched)
                 .sheet(isPresented: $showTeamworkStatsSheet) {
                     TeamworkMatchStatsSheet(team: team, season: selected_season)
                         .environmentObject(settings)
@@ -424,23 +431,18 @@ struct TeamLookup: View {
     }
 }
 
-
 // MARK: - EventLookup & EventSearch
 
 struct EventLookup: View {
     
-    // Use the environment settings here so that the rest of your app remains consistent.
     @EnvironmentObject var settings: UserSettings
     @EnvironmentObject var favorites: FavoriteStorage
     @EnvironmentObject var dataController: ADCHubDataController
     
-    // We remove the duplicate newsettings and use onAppear to update eventSearch.settings.
     @StateObject private var eventSearch: EventSearch = EventSearch(settings: UserSettings())
     @State private var selected_season: Int = API.selected_season_id()
     
     init() {
-        // Since environment objects are not available in init, we initialize with a temporary settings.
-        // We will update eventSearch.settings in .onAppear.
         _eventSearch = StateObject(wrappedValue: EventSearch(settings: UserSettings()))
     }
     

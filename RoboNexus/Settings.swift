@@ -44,6 +44,9 @@ struct Settings: View {
     @State var confirmClearNotes = false
     @State var confirmAppearance = false
     @State var confirmAPIKey = false
+    @State private var enteredDeveloperCode: String = ""
+    @State private var isDeveloperModeEnabled: Bool = UserDefaults.standard.bool(forKey: "DeveloperModeEnabled")
+    @State private var showDisableDeveloperAlert: Bool = false
     
     var mode: String {
         #if DEBUG
@@ -63,9 +66,6 @@ struct Settings: View {
     }
     
     // Computed binding for the program selection.
-    // When the program changes, we update UserSettings, update the ConfigManager,
-    // refresh the season ID map and world skills caches, and then set selected_season_id
-    // to the active season for that program.
     var programBinding: Binding<ProgramType> {
         Binding<ProgramType>(
             get: {
@@ -141,6 +141,7 @@ struct Settings: View {
                         Spacer()
                     }
                 }
+                
                 // MARK: - General Settings
                 Section("General") {
                     Toggle("Enable Haptics", isOn: $settings.enableHaptics)
@@ -155,6 +156,7 @@ struct Settings: View {
                         Text("Date Filter: \(-settings.getDateFilter()) days ago")
                     }
                 }
+                
                 // MARK: - Appearance Section
                 Section("Appearance") {
                     ColorPicker("Top Bar Color", selection: $selected_top_bar_color, supportsOpacity: false)
@@ -247,10 +249,54 @@ struct Settings: View {
                         Spacer()
                         Text("\(UIApplication.appVersion!) (\(UIApplication.appBuildNumber!))\(self.mode)")
                     }
+                    
+                    if !isDeveloperModeEnabled {
+                        // Developer mode is not enabled—show the unlock UI.
+                        TextField("Enter Developer Code", text: $enteredDeveloperCode)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .padding(.vertical, 4)
+                        
+                        Button("Unlock Developer Mode") {
+                            // Use the helper to validate the entered code.
+                            if isValidDeveloperCode(enteredDeveloperCode) {
+                                isDeveloperModeEnabled = true
+                                UserDefaults.standard.set(true, forKey: "DeveloperModeEnabled")
+                            } else {
+                                // Optionally clear the field or provide feedback.
+                                enteredDeveloperCode = ""
+                            }
+                        }
+                    } else {
+                        // When developer mode is enabled, present a tappable indicator.
+                        Button(action: {
+                            showDisableDeveloperAlert = true
+                        }) {
+                            Text("Developer Mode is enabled")
+                                .foregroundColor(.green)
+                        }
+                        .alert(isPresented: $showDisableDeveloperAlert) {
+                            Alert(
+                                title: Text("Disable Developer Mode?"),
+                                message: Text("Do you want to disable Developer Mode? This will also disable the All Around Champion feature."),
+                                primaryButton: .destructive(Text("Yes")) {
+                                    // Disable developer mode and clear any dependent feature toggles.
+                                    isDeveloperModeEnabled = false
+                                    UserDefaults.standard.set(false, forKey: "DeveloperModeEnabled")
+                                    settings.allAroundEligibilityFeaturesEnabled = false
+                                },
+                                secondaryButton: .cancel(Text("No"))
+                            )
+                        }
+                        
+                        // Show additional developer-only features.
+                        Toggle("All Around Eligibility", isOn: $settings.allAroundEligibilityFeaturesEnabled)
+                    }
                 }
-                
+
+                // MARK: - Credits Section
                 Section {
-                    // You can leave the section content empty if you only need a header.
                 } header: {
                     // Combine Text views so that only the middle part is red.
                     Text("Developed by Skyler Clagg, ")

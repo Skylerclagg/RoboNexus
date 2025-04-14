@@ -103,8 +103,6 @@ struct EventDivisionMatches: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            // Note: This view does not add its own refresh button,
-            // as the refresh is controlled by the parent view.
             ToolbarItem(placement: .navigationBarTrailing) {
                 EmptyView()
             }

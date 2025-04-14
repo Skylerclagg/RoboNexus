@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TeamworkScoreCalculator: View {
     @EnvironmentObject var navigation_bar_manager: NavigationBarManager
-    @EnvironmentObject var settings: UserSettings  // Must have `@Published var enableHaptics = false`
+    @EnvironmentObject var settings: UserSettings
 
     // State variables for input fields
     @State private var dropZoneTopCleared = 0
