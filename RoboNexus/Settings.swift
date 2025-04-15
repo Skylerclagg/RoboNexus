@@ -252,22 +252,20 @@ struct Settings: View {
                     
                     if !isDeveloperModeEnabled {
                         // Developer mode is not enabled—show the unlock UI.
-                        TextField("Enter Developer Code", text: $enteredDeveloperCode)
+                        SecureField("Enter Developer Code", text: $enteredDeveloperCode)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
                             .padding(.vertical, 4)
                         
                         Button("Unlock Developer Mode") {
-                            // Use the helper to validate the entered code.
-                            if isValidDeveloperCode(enteredDeveloperCode) {
-                                isDeveloperModeEnabled = true
-                                UserDefaults.standard.set(true, forKey: "DeveloperModeEnabled")
-                            } else {
-                                // Optionally clear the field or provide feedback.
-                                enteredDeveloperCode = ""
-                            }
-                        }
+                                    // Use the helper to validate the entered code.
+                                    if isValidDeveloperCode(enteredDeveloperCode) {
+                                        isDeveloperModeEnabled = true
+                                        UserDefaults.standard.set(true, forKey: "DeveloperModeEnabled")
+                                    } else {
+                                        // Optionally clear the entered text or provide an alert.
+                                        enteredDeveloperCode = ""
+                                    }
+                                }
                     } else {
                         // When developer mode is enabled, present a tappable indicator.
                         Button(action: {
@@ -281,10 +279,10 @@ struct Settings: View {
                                 title: Text("Disable Developer Mode?"),
                                 message: Text("Do you want to disable Developer Mode? This will also disable the All Around Champion feature."),
                                 primaryButton: .destructive(Text("Yes")) {
-                                    // Disable developer mode and clear any dependent feature toggles.
                                     isDeveloperModeEnabled = false
                                     UserDefaults.standard.set(false, forKey: "DeveloperModeEnabled")
                                     settings.allAroundEligibilityFeaturesEnabled = false
+                                    enteredDeveloperCode = ""
                                 },
                                 secondaryButton: .cancel(Text("No"))
                             )
@@ -292,6 +290,7 @@ struct Settings: View {
                         
                         // Show additional developer-only features.
                         Toggle("All Around Eligibility", isOn: $settings.allAroundEligibilityFeaturesEnabled)
+                        Toggle("Testing Eligibility Features", isOn: $settings.testingEligibilityFeaturesEnabled)
                     }
                 }
 
