@@ -7,6 +7,7 @@ enum ProgramType: String, CaseIterable, Identifiable {
     case viqrc = "VEX IQ Robotics Competition"
     case v5rc = "VEX V5 Robotics Competition"
     case vurc = "VEX U Robotics Competition"
+    case vairc = "VEX AI Robotics Competition"
     
     var id: String { self.rawValue }
     var displayName: String { self.rawValue }
@@ -95,6 +96,15 @@ class ConfigManager: ObservableObject {
             let bottomBar = ["Home", "Matches", "Events", "Settings"]
             // Competition format: alliances (1 team per alliance, head-to-head) for College.
             let compFormat = CompetitionFormat.alliances(teamsPerAlliance: 1, ageLevels: ["College"])
+            return ProgramConfig(theme: theme, bottomBarOptions: bottomBar, competitionFormat: compFormat)
+        case .vairc:
+            let theme = ProgramTheme(primaryColor: Color.red,
+                                     lightContentColor: Color.white,
+                                     darkContentColor: Color.black)
+            // Fewer bottom bar options.
+            let bottomBar = ["Home", "Matches", "Events", "Settings"]
+            // Competition format: alliances (1 team per alliance, head-to-head) for College.
+            let compFormat = CompetitionFormat.alliances(teamsPerAlliance: 1, ageLevels: ["High School","College"])
             return ProgramConfig(theme: theme, bottomBarOptions: bottomBar, competitionFormat: compFormat)
         }
     }

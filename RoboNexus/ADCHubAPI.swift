@@ -97,6 +97,8 @@ public class ADCHubAPI {
     public var v5rc_high_school_skills_cache: WorldSkillsCache = WorldSkillsCache()
     
     public var vurc_skills_cache: WorldSkillsCache = WorldSkillsCache()
+    public var vairc_high_school_skills_cache: WorldSkillsCache = WorldSkillsCache()
+    public var vairc_college_skills_cache: WorldSkillsCache = WorldSkillsCache()
     
     public var imported_skills: Bool
     public var regions_map: [String: Int]
@@ -121,6 +123,7 @@ public class ADCHubAPI {
             (0, "All"),
             (1, "Middle School"),
             (2, "High School"),
+            (3, "College")
         ])
     ]
     
@@ -134,6 +137,8 @@ public class ADCHubAPI {
         self.v5rc_middle_school_skills_cache = WorldSkillsCache()
         self.v5rc_high_school_skills_cache = WorldSkillsCache()
         self.vurc_skills_cache = WorldSkillsCache()
+        self.vairc_college_skills_cache = WorldSkillsCache()
+        self.vairc_high_school_skills_cache = WorldSkillsCache()
         
         self.imported_skills = false
         self.regions_map = [String: Int]()
@@ -150,7 +155,8 @@ public class ADCHubAPI {
             "Aerial Drone Competition": 44,
             "VEX IQ Robotics Competition": 41,
             "VEX U Robotics Competition": 4,
-            "VEX V5 Robotics Competition": 1
+            "VEX V5 Robotics Competition": 1,
+            "VEX AI Robotics Competition" : 57
         ]
         return mapping[programStr] ?? 44
     }
@@ -364,6 +370,19 @@ public class ADCHubAPI {
                 print("VURC Cache populated with \(self.vurc_skills_cache.teams.count) teams.")
                 dispatchGroup.leave()
             }
+        case "VEX AI Robotics Competition":
+            dispatchGroup.enter()
+            fetch_world_skills(forGrade: "High School", season: seasonID) { responses in
+                self.vairc_high_school_skills_cache = WorldSkillsCache(responses: responses)
+                print("VAIRC High School Cache populated with \(self.vairc_high_school_skills_cache.teams.count) teams.")
+                dispatchGroup.leave()
+            }
+            dispatchGroup.enter()
+            fetch_world_skills(forGrade: "College", season: seasonID) { responses in
+                self.vairc_college_skills_cache = WorldSkillsCache(responses: responses)
+                print("VAIRC College Cache populated with \(self.vairc_college_skills_cache.teams.count) teams.")
+                dispatchGroup.leave()
+            }
         default:
             print("Unknown program: no caches updated.")
         }
@@ -397,7 +416,14 @@ public class ADCHubAPI {
             }
         } else if prog == "VEX U Robotics Competion" {
             cache = self.vurc_skills_cache
-        } else {
+        }else if prog == "VEX AI Robotics Competition" {
+            if team.grade == "High School"{
+                cache = self.vairc_high_school_skills_cache
+            }else{
+                cache = self.vairc_college_skills_cache
+            }
+        }
+        else {
             // Fallback to ADC high school cache if something unexpected occurs.
             cache = self.adc_high_school_skills_cache
         }
@@ -1155,16 +1181,8 @@ public class Team: Identifiable {
     }
     
     public func fetch_events(season: Int? = nil) {
-        var season_id: Int
-        let grade = (self.grade == "High School" || self.grade == "Middle School") ? self.grade : "High School"
-        let selected_grade = (UserSettings.getGradeLevel() == "High School" || UserSettings.getGradeLevel() == "Middle School") ? UserSettings.getGradeLevel() : "High School"
+        let season_id = UserSettings.getSelectedSeasonID()
         
-        if grade != selected_grade {
-            season_id = API.season_id_map[selected_grade == "High School" ? 0 : 1].keys.first ?? API.selected_season_id()
-        } else {
-            print("Using selected season id: \(API.selected_season_id())")
-            season_id = API.selected_season_id()
-        }
         
         let data = ADCHubAPI.robotevents_request(request_url: "/events", params: ["team": self.id, "season": season ?? season_id])
         for event in data {

@@ -54,13 +54,13 @@ struct WorldSkillsTeam: Identifiable, Hashable {
             let teamRegion = world_skills.team.region
             if teamRegion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 // Use event_region if teamRegion is empty.
-                self.regionName = world_skills.event_region ?? ""
+                self.regionName = world_skills.event_region
             } else {
                 let normalized = StateRegionMapping.stateNameVariations[teamRegion] ?? teamRegion
                 self.regionName = StateRegionMapping.stateToRegionMap[normalized] ?? normalized
             }
         } else {
-            self.regionName = world_skills.event_region ?? world_skills.team.region
+            self.regionName = world_skills.event_region
         }
     }
 
@@ -173,6 +173,10 @@ class WorldSkillsTeams: ObservableObject {
                     : API.v5rc_high_school_skills_cache
             case "VEX U Robotics Competition":
                 skillsCache = API.vurc_skills_cache
+            case "VEX AI Robotics Competition":
+                skillsCache = (gradeLevel == "College")
+                    ? API.vairc_college_skills_cache
+                    : API.vairc_high_school_skills_cache
             case "ADC", "Aerial Drone Competition":
                 fallthrough
             default:
@@ -190,7 +194,7 @@ class WorldSkillsTeams: ObservableObject {
                 print("""
                     DEBUG: Created team \(rowModel.number)
                     with teamRegion='\(wTeam.team.region)'
-                    eventRegion='\(wTeam.event_region ?? "N/A")'
+                    eventRegion='\(wTeam.event_region)'
                     => mapped regionName='\(rowModel.regionName)'
                     """)
                 loadedTeams.append(rowModel)
@@ -266,6 +270,8 @@ struct WorldSkillsRankings: View {
             return "Elementary"
         case "VEX U Robotics Competition":
             return "College"
+        case "VEX AI Robotics Competition":
+            return "High School"
         default:
             return "High School"
         }
@@ -309,7 +315,10 @@ struct WorldSkillsRankings: View {
                         if settings.selectedProgram == "VEX IQ Robotics Competition" {
                             Text("Elementary").tag("Elementary")
                             Text("Middle School").tag("Middle School")
-                        } else {
+                        } else if settings.selectedProgram == "VEX AI Robotics Competition"{
+                            Text("High School").tag("High School")
+                            Text("College").tag("College")
+                        }else {
                             Text("Middle School").tag("Middle School")
                             Text("High School").tag("High School")
                         }

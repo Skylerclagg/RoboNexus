@@ -1,5 +1,5 @@
 //
-//  Events.swift
+//  TeamEventsView.swift
 //
 //  ADC Hub
 //

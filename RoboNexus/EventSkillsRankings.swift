@@ -11,167 +11,164 @@
 
 import SwiftUI
 
+/// Holds the sorted list of ranking indices for the event.
 class EventSkillsRankingsList: ObservableObject {
     @Published var rankings_indexes: [Int]
-    
-    init(rankings_indexes: [Int] = [Int]()) {
+
+    init(rankings_indexes: [Int] = []) {
         self.rankings_indexes = rankings_indexes.sorted()
     }
 }
 
 struct EventSkillsRankings: View {
-    
     @EnvironmentObject var settings: UserSettings
-    
     @State var event: Event
     @State var teams_map: [String: String]
-    @State var event_skills_rankings_list: EventSkillsRankingsList
-    @State var showLoading = true
-    @State var teamNumberQuery = ""
-    
-    // Determine labels based on the selected program.
-    var autonomousLabel: String {
+    @State var event_skills_rankings_list = EventSkillsRankingsList()
+    @State private var showLoading = true
+    @State private var teamNumberQuery = ""
+
+    // MARK: - Computed Labels
+    private var autonomousLabel: String {
         if settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition" {
             return "Autonomous Flight:"
         } else {
             return "Autonomous Coding:"
         }
     }
-    var driverLabel: String {
+    private var driverLabel: String {
         if settings.selectedProgram == "ADC" || settings.selectedProgram == "Aerial Drone Competition" {
             return "Piloting:"
         } else {
             return "Driver:"
         }
     }
-    
-    var searchResults: [Int] {
-        if teamNumberQuery.isEmpty {
+
+    // MARK: - Search Filtering
+    private var searchResults: [Int] {
+        guard !teamNumberQuery.isEmpty else {
             return event_skills_rankings_list.rankings_indexes
-        } else {
-            return event_skills_rankings_list.rankings_indexes.filter { index in
-                let mappedID = teams_map[String(team_ranking(rank: index).team.id)] ?? ""
-                return mappedID.lowercased().contains(teamNumberQuery.lowercased())
-            }
+        }
+        return event_skills_rankings_list.rankings_indexes.filter { index in
+            let idText = teams_map[String(event.skills_rankings[index].team.id)] ?? ""
+            return idText.lowercased().contains(teamNumberQuery.lowercased())
         }
     }
-    
-    init(event: Event, teams_map: [String: String]) {
-        self.event = event
-        self.teams_map = teams_map
-        self.event_skills_rankings_list = EventSkillsRankingsList()
-    }
-    
-    func fetch_rankings() {
-        // Optionally set a loading flag to true for UI feedback.
+
+    // MARK: - Data Fetching
+    private func fetch_rankings() {
         showLoading = true
         DispatchQueue.global(qos: .userInteractive).async { [self] in
             event.fetch_skills_rankings()
-            var fetched_rankings_indexes = [Int]()
-            var counter = 0
-            for _ in event.skills_rankings {
-                fetched_rankings_indexes.append(counter)
-                counter += 1
-            }
+            let indices = Array(event.skills_rankings.indices)
             DispatchQueue.main.async {
-                self.event_skills_rankings_list = EventSkillsRankingsList(rankings_indexes: fetched_rankings_indexes)
-                self.showLoading = false
+                event_skills_rankings_list = EventSkillsRankingsList(rankings_indexes: indices)
+                showLoading = false
             }
         }
     }
-    
-    func team_ranking(rank: Int) -> TeamSkillsRanking {
-        return event.skills_rankings[rank]
+
+    // MARK: - Extracted Row (reduces type-check complexity)
+    @ViewBuilder private func rankingRow(_ rank: Int) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Team header
+            HStack {
+                Text(teams_map[String(event.skills_rankings[rank].team.id)] ?? "")
+                    .font(.system(size: 20))
+                    .bold()
+                    .frame(width: 70, alignment: .leading)
+                    .minimumScaleFactor(0.01)
+                Text(event.get_team(id: event.skills_rankings[rank].team.id)?.name ?? "")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(height: 20)
+
+            // Scores detail
+            HStack(alignment: .top) {
+                // Rank & combined score
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("# \(event.skills_rankings[rank].rank)")
+                        .font(.system(size: 16))
+                    Text("\(event.skills_rankings[rank].combined_score)")
+                        .font(.system(size: 16))
+                }
+                .frame(width: 60, alignment: .leading)
+
+                Spacer()
+
+                // Autonomous section
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(autonomousLabel)
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary)
+                    if settings.selectedProgram == "Aerial Drone Competition" {
+                        Text("Runs: \(event.skills_rankings[rank].programming_attempts)")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                        Text("Score: \(event.skills_rankings[rank].programming_score)")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Attempts: \(event.skills_rankings[rank].programming_attempts)")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                        Text("Score: \(event.skills_rankings[rank].programming_score)")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .frame(width: 145, alignment: .leading)
+
+                Spacer()
+
+                // Driver section
+                if settings.selectedProgram != "VEX AI Robotics Competition" {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(driverLabel)
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                        Text("Attempts: \(event.skills_rankings[rank].driver_attempts)")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                        Text("Score: \(event.skills_rankings[rank].driver_score)")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(width: 100, alignment: .leading)
+                    Spacer()
+                }
+            }
+        }
+        .padding(.vertical, 4)
     }
-    
+
+    // MARK: - View Body
     var body: some View {
         VStack {
             if showLoading {
-                ProgressView().padding()
+                ProgressView()
+                    .padding()
                 Spacer()
             } else if event.skills_rankings.isEmpty {
                 NoData()
             } else {
-                // Use a simple List (remove the inner NavigationView if the parent provides one)
-                List {
-                    ForEach(searchResults, id: \.self) { rank in
-                        VStack {
-                            HStack {
-                                HStack {
-                                    Text(teams_map[String(team_ranking(rank: rank).team.id)] ?? "")
-                                        .font(.system(size: 20))
-                                        .minimumScaleFactor(0.01)
-                                        .frame(width: 70, alignment: .leading)
-                                        .bold()
-                                    Text((event.get_team(id: team_ranking(rank: rank).team.id) ?? Team()).name)
-                                        .frame(alignment: .leading)
-                                }
-                                Spacer()
-                            }
-                            .frame(height: 20, alignment: .leading)
-                            HStack {
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text("# \(team_ranking(rank: rank).rank)")
-                                            .font(.system(size: 16))
-                                        Text("\(team_ranking(rank: rank).combined_score)")
-                                            .font(.system(size: 16))
-                                    }
-                                    .frame(width: 60, alignment: .leading)
-                                    Spacer()
-                                    VStack(alignment: .leading) {
-                                        Text(autonomousLabel)
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text("Attempts: \(team_ranking(rank: rank).programming_attempts)")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text("Score: \(team_ranking(rank: rank).programming_score)")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                    }
-                                    .frame(width: 145, alignment: .leading)
-                                    Spacer()
-                                    VStack(alignment: .leading) {
-                                        Text(driverLabel)
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text("Attempts: \(team_ranking(rank: rank).driver_attempts)")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text("Score: \(team_ranking(rank: rank).driver_score)")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                    }
-                                    .frame(width: 100, alignment: .leading)
-                                    Spacer()
-                                }
-                            }
-                        }
-                    }
+                List(searchResults, id: \.self) { rank in
+                    rankingRow(rank)
                 }
                 .searchable(text: $teamNumberQuery, prompt: "Enter a team number...")
                 .tint(settings.topBarContentColor())
             }
         }
-        .task {
-            fetch_rankings()
-        }
+        .task { fetch_rankings() }
         .background(.clear)
         .toolbar {
-            // Principal title in toolbar.
             ToolbarItem(placement: .principal) {
                 Text("Skills Rankings")
-                    .fontWeight(.medium)
-                    .font(.system(size: 19))
+                    .font(.system(size: 19, weight: .medium))
                     .foregroundColor(settings.topBarContentColor())
             }
-            // Add refresh button, styled like your note button.
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button(action: {
-                    // Trigger refresh.
-                    fetch_rankings()
-                }) {
+                Button(action: { fetch_rankings() }) {
                     Image(systemName: "arrow.clockwise")
                 }
                 .foregroundColor(settings.topBarContentColor())
@@ -185,8 +182,10 @@ struct EventSkillsRankings: View {
     }
 }
 
+// MARK: - Preview
 struct EventSkillsRankings_Previews: PreviewProvider {
     static var previews: some View {
-        EventSkillsRankings(event: Event(), teams_map: [String: String]())
+        EventSkillsRankings(event: Event(), teams_map: [:])
+            .environmentObject(UserSettings())
     }
 }
