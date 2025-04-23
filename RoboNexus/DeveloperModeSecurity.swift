@@ -12,7 +12,7 @@ import CryptoKit
 
 // Replace these hash strings with the SHA‑256 hashes of your valid developer codes.
 private let validDevCodeHashes: [String] = [
-    "5bd389d91e3deeb9e0c5902b78e614f40c4d5753786736c514a0ab0cf673a73c", // (Learning1)
+    "ec7a1425f5c313b93e6b5b66978130a1f92b2e5bdfcaa52013de0d568094336e", // (Learning1)
     "1e7f5f3f24c25a6d647ccfd84799491d11e6bc09433fba5270a4ad363e6111a6", // (WVRobotics)
 ]
 

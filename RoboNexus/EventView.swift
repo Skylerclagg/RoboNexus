@@ -1,18 +1,15 @@
 //
 //  EventView.swift
-//
 //  ADC Hub
 //
-//  Based on
-//  VRC RoboScout by William Castro
+//  Displays event details, navigation to teams, matches, and favorites.
 //
-//  Created by Skyler Clagg on 9/26/24.
+//  Created by Skyler Clagg on 9/26/24 (updated 4/21/25).
 //
 
 import SwiftUI
 
 struct EventDivisionRow: View {
-
     @EnvironmentObject var settings: UserSettings
     @EnvironmentObject var favorites: FavoriteStorage
     @EnvironmentObject var dataController: ADCHubDataController
@@ -22,8 +19,6 @@ struct EventDivisionRow: View {
 
     var division: String
     var event: Event
-    // Added a local binding for the teams list from the event.
-    // (Assuming the parent view holds this as state.)
     var event_teams_list: [String]
 
     var body: some View {
@@ -53,18 +48,9 @@ class EventDivisions: ObservableObject {
     init(event_divisions: [String]) {
         self.event_divisions = event_divisions
     }
-
-    public func as_array() -> [String] {
-        var out_list = [String]()
-        for division in self.event_divisions {
-            out_list.append(division)
-        }
-        return out_list
-    }
 }
 
 struct EventView: View {
-
     @EnvironmentObject var settings: UserSettings
     @EnvironmentObject var favorites: FavoriteStorage
     @EnvironmentObject var dataController: ADCHubDataController
@@ -81,20 +67,16 @@ struct EventView: View {
     init(event: Event, team: Team? = nil) {
         self.event = event
         self.team = team
-        // Convert Divisions -> "[id]&&[name]"
         self.event_divisions = EventDivisions(
             event_divisions: event.divisions.map { "\($0.id)&&\($0.name)" }
         )
     }
 
     func fetch_event_data() {
-        // Use the new per-program event favorites approach
         favorited = favorites.favoriteEvents.contains(event.sku)
 
         DispatchQueue.global(qos: .userInteractive).async { [self] in
-            if showLoading == false {
-                return
-            }
+            guard showLoading else { return }
 
             if event.name.isEmpty {
                 event.fetch_info()
@@ -102,18 +84,14 @@ struct EventView: View {
                     event_divisions: event.divisions.map { "\($0.id)&&\($0.name)" }
                 )
             }
-
             if event.teams.isEmpty {
                 event.fetch_teams()
             }
             self.event_teams = event.teams
 
             DispatchQueue.main.async {
-                self.event_teams_list.removeAll()
-                for t in self.event_teams {
-                    self.teams_map[String(t.id)] = t.number
-                    self.event_teams_list.append(t.number)
-                }
+                self.event_teams_list = event_teams.map { $0.number }
+                self.teams_map = Dictionary(uniqueKeysWithValues: event_teams.map { ("\($0.id)", $0.number) })
                 showLoading = false
             }
         }
@@ -133,15 +111,12 @@ struct EventView: View {
                         ) {
                             Text("Information")
                         }
-                        
-                        // New Agenda NavigationLink added below the Information button.
                         NavigationLink(
                             destination: AgendaView(event: event)
                                 .environmentObject(settings)
                         ) {
                             Text("Agenda")
                         }
-                        
                         NavigationLink(
                             destination: EventTeams(
                                 event: event,
@@ -154,7 +129,6 @@ struct EventView: View {
                         ) {
                             Text("Teams")
                         }
-                        
                         if let team = team {
                             NavigationLink(
                                 destination: EventTeamMatches(
@@ -169,7 +143,7 @@ struct EventView: View {
                             }
                         }
                     }
-                    
+
                     Section("Skills") {
                         NavigationLink(
                             destination: EventSkillsRankings(event: event, teams_map: teams_map)
@@ -178,9 +152,9 @@ struct EventView: View {
                             Text("Skills Rankings")
                         }
                     }
+
                     Section("Divisions") {
-                        List($event_divisions.event_divisions) { division in
-                            // Pass event_teams_list along to the row view.
+                        List($event_divisions.event_divisions, id: \.self) { division in
                             EventDivisionRow(
                                 teams_map: $teams_map,
                                 event_teams: $event_teams,
@@ -190,13 +164,27 @@ struct EventView: View {
                             )
                             .environmentObject(settings)
                             .environmentObject(favorites)
+                            .environmentObject(dataController)
                         }
                     }
-                    
-                    // Show a section for "Favorite Teams Match Lists"
+
+                    // Show favorites section only if there are favorites
                     let favoriteEventTeams = event_teams.filter { favorites.favoriteTeams.contains($0.number) }
                     if !favoriteEventTeams.isEmpty {
                         Section("Favorite Teams Match Lists") {
+                            NavigationLink(
+                                destination: FavoriteTeamsMatches(
+                                    teams_map:   $teams_map,
+                                    event:       event,
+                                    event_teams: event_teams
+                                )
+                                .environmentObject(settings)
+                                .environmentObject(favorites)
+                                .environmentObject(dataController)
+                            ) {
+                                Label("All Favorite Teams Matches", systemImage: "star.fill")
+                                    .foregroundColor(settings.topBarContentColor())
+                            }
                             ForEach(favoriteEventTeams, id: \.id) { favTeam in
                                 NavigationLink(
                                     destination: EventTeamMatches(
@@ -215,10 +203,8 @@ struct EventView: View {
                 }
             }
         }
+        .task { fetch_event_data() }
         .tint(settings.buttonColor())
-        .task {
-            fetch_event_data()
-        }
         .background(.clear)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -227,27 +213,19 @@ struct EventView: View {
                     .font(.system(size: 19))
                     .foregroundColor(settings.topBarContentColor())
             }
-            // Using a ToolbarItemGroup for trailing items so both buttons appear.
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                // Favorites toggle button.
                 Button(action: {
-                    if favorites.favoriteEvents.contains(event.sku) {
+                    if favorited {
                         favorites.removeEvent(event.sku)
-                        favorited = false
                     } else {
                         favorites.addEvent(event.sku)
-                        favorited = true
                     }
-                }, label: {
-                    if favorited {
-                        Image(systemName: "star.fill")
-                            .foregroundColor(settings.topBarContentColor())
-                    } else {
-                        Image(systemName: "star")
-                            .foregroundColor(settings.topBarContentColor())
-                    }
-                })
-                            }
+                    favorited.toggle()
+                }) {
+                    Image(systemName: favorited ? "star.fill" : "star")
+                        .foregroundColor(settings.topBarContentColor())
+                }
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(settings.tabColor(), for: .navigationBar)

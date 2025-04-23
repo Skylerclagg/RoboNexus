@@ -1045,12 +1045,14 @@ struct AllAroundChampionEligibleTeams: View {
                     let hasDriverScore = event.skills_rankings.contains { $0.team.id == team.id && $0.driver_score > 0 }
                     let isInRankingCutoff = rankings_teams.contains(where: { $0.id == team.id })
                     
+                    // Compute skills rank (position in sortedSkillsRankings) for this team.
                     let skillsRankComputed: Int = {
                         if let index = sortedSkillsRankings.firstIndex(where: { $0.team.id == team.id }) {
                             return index + 1
                         }
                         return -1
                     }()
+                    // Compute qualifier rank (position in the rankings array) for this team.
                     let qualifierRankComputed: Int = {
                         if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
                             return index + 1
@@ -1071,10 +1073,21 @@ struct AllAroundChampionEligibleTeams: View {
                         skillsData: skillsDataComputed
                     )
                     
+                    // --- Debug prints ---
+                    print("DEBUG: Processing Team \(team.number) (id: \(team.id)) in Grade: \(grade)")
+                    print("DEBUG: Qualifier rank computed: \(qualifierRankComputed) (Ranking cutoff: \(ranking_cutoff))")
+                    print("DEBUG: Skills rank computed: \(skillsRankComputed) (Skills cutoff: \(skillsCutoff))")
+                    print("DEBUG: Has programming score: \(hasProgrammingScore), Has driver score: \(hasDriverScore)")
+                    print("DEBUG: isInRankingCutoff: \(isInRankingCutoff)")
+                    // ----------------------
+                    
                     // Require both the qualification and skills rank to be within cutoff.
-                    if isInRankingCutoff && hasProgrammingScore && (skillsRankComputed > 0 && skillsRankComputed <= skillsCutoff) {
+                    if isInRankingCutoff &&
+                        hasProgrammingScore &&
+                        (skillsRankComputed > 0 && skillsRankComputed <= skillsCutoff) {
                         eligible_teams_local.append(team)
                         precomputedEligible[team.id] = computedPre
+                        print("DEBUG: Team \(team.number) marked ELIGIBLE with computed values: \(computedPre)")
                     } else {
                         if !isInRankingCutoff {
                             if let index = rankings.firstIndex(where: { $0.team.id == team.id }) {
@@ -1101,6 +1114,7 @@ struct AllAroundChampionEligibleTeams: View {
                         ineligibleTeams_local.append(team)
                         ineligibleTeamsReasons_local[team.id] = reasons
                         precomputedIneligible[team.id] = computedPre
+                        print("DEBUG: Team \(team.number) marked INELIGIBLE with reasons: \(reasons)")
                     }
                 }
             }

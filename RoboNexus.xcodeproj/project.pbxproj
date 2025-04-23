@@ -18,6 +18,7 @@
 		3DAFC80E2A2640EB00A0C41A /* CoreML in Resources */ = {isa = PBXBuildFile; fileRef = 3DAFC80D2A2640EB00A0C41A /* CoreML */; };
 		3DB11E52299543DC001DDB02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DB11E51299543DC001DDB02 /* Assets.xcassets */; };
 		3DE63FAF2C59A59C0049939C /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D22AAA92BD9C16B001AD59E /* Config.plist */; };
+		D43F76BD2DB680A60065DC91 /* FavoriteTeamsMatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43F76BC2DB680A60065DC91 /* FavoriteTeamsMatches.swift */; };
 		D4A08B642D5A7B550088CDAC /* ConfigManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A08B632D5A7B330088CDAC /* ConfigManger.swift */; };
 		D4AB4E7A2D931F6600218475 /* MatchScoreEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */; };
 		D4AB4E7D2D93303A00218475 /* DataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F332FE2CA78AE300C7EE4F /* DataExporter.swift */; };
@@ -141,6 +142,7 @@
 		3DB21DD42B054D6400B12803 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		3DE63FA12C5808BA0049939C /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		3DFB59C32C536BCC0061CE6C /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		D43F76BC2DB680A60065DC91 /* FavoriteTeamsMatches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteTeamsMatches.swift; sourceTree = "<group>"; };
 		D4A08B632D5A7B330088CDAC /* ConfigManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManger.swift; sourceTree = "<group>"; };
 		D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchScoreEntry.swift; sourceTree = "<group>"; };
 		D4AE88C12DAD626D00009F05 /* DeveloperModeSecurity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperModeSecurity.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 		3DB11E4C299543D9001DDB02 /* RoboNexus */ = {
 			isa = PBXGroup;
 			children = (
+				D43F76BC2DB680A60065DC91 /* FavoriteTeamsMatches.swift */,
 				D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */,
 				D4BBB7312D809D16004E4E6E /* AgendaView.swift */,
 				D4A08B632D5A7B330088CDAC /* ConfigManger.swift */,
@@ -504,6 +507,7 @@
 				D4F0846B2CA47C230032E72D /* ADCHubActivityController.swift in Sources */,
 				D4F0846C2CA47C230032E72D /* AppDelegate.swift in Sources */,
 				D4F0846D2CA47C230032E72D /* ADCHubApp.swift in Sources */,
+				D43F76BD2DB680A60065DC91 /* FavoriteTeamsMatches.swift in Sources */,
 				D4E7F1D22CA4C267005886B7 /* TeamworkScoreCalculator.swift in Sources */,
 				D4AE88C22DAD627300009F05 /* DeveloperModeSecurity.swift in Sources */,
 				D4F0846E2CA47C230032E72D /* Shared.swift in Sources */,
@@ -750,14 +754,14 @@
 				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 92S72MX2PG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ADC-Hub-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "ADC Hub";
+				INFOPLIST_KEY_CFBundleDisplayName = RoboNexus;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
@@ -773,14 +777,14 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -805,7 +809,7 @@
 				CODE_SIGN_ENTITLEMENTS = RoboNexus/RoboNexus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 92S72MX2PG;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -813,7 +817,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ADC-Hub-Info.plist";
 				"INFOPLIST_FILE[sdk=*]" = "ADC-Hub-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "ADC Hub";
+				INFOPLIST_KEY_CFBundleDisplayName = RoboNexus;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Calendar access is needed to add events.";
@@ -829,14 +833,14 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
