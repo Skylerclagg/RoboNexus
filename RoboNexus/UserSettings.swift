@@ -314,6 +314,13 @@ class UserSettings: ObservableObject {
     
     // NEW: Static getter for selected program.
     static func getSelectedProgram() -> String? {
-        return defaults.object(forKey: "selectedProgram") as? String ?? "Aerial Drone Competition"
+        let devMode = defaults.bool(forKey: "DeveloperModeEnabled")
+        if let stored = defaults.object(forKey: "selectedProgram") as? String {
+            if stored == ProgramType.adc.rawValue && !devMode {
+                return ProgramType.selectableCases.first?.rawValue
+            }
+            return stored
+        }
+        return ProgramType.selectableCases.first?.rawValue
     }
 }
