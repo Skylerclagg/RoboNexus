@@ -11,6 +11,13 @@ enum ProgramType: String, CaseIterable, Identifiable {
     
     var id: String { self.rawValue }
     var displayName: String { self.rawValue }
+    
+    /// Cases currently available for user selection.
+     /// Hides the Aerial Drone Competition option unless Developer Mode is enabled.
+     static var selectableCases: [ProgramType] {
+         let devMode = UserDefaults.standard.bool(forKey: "DeveloperModeEnabled")
+         return devMode ? Self.allCases : Self.allCases.filter { $0 != .adc }
+     }
 }
 
 // MARK: - CompetitionFormat Enum
@@ -45,10 +52,19 @@ class ConfigManager: ObservableObject {
     @Published var currentConfig: ProgramConfig
 
     init() {
-        // Use a local variable to initialize currentProgram first.
-        let defaultProgram: ProgramType = .adc  // Default to ADC (Aerial Drone Competition)
-        self.currentProgram = defaultProgram
-        self.currentConfig = ConfigManager.config(for: defaultProgram)
+        // Determine the initial program using the stored selection when available.
+                let initialProgram: ProgramType
+                if let stored = UserSettings.getSelectedProgram(),
+                   let prog = ProgramType(rawValue: stored) {
+                    initialProgram = prog
+                } else {
+                    initialProgram = ProgramType.selectableCases.first ?? .viqrc
+                }
+
+                // Assign stored properties using the local variable so `self` isn't
+                // accessed before initialization completes.
+                self.currentProgram = initialProgram
+                self.currentConfig = ConfigManager.config(for: initialProgram)
     }
     
     // Returns a configuration for the given program.

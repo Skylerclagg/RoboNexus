@@ -29,6 +29,7 @@
 		D4C6BFC62CD26FE90034C350 /* PilotingSkillsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */; };
 		D4C6BFC82CD270B70034C350 /* ScoreCalculatorsHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C6BFC72CD270B70034C350 /* ScoreCalculatorsHome.swift */; };
 		D4C6BFCA2CD273300034C350 /* AutonomousFlightSkillsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C6BFC92CD2732F0034C350 /* AutonomousFlightSkillsCalculator.swift */; };
+		D4CC775B2E06EACC003D037C /* ProgramSelectionPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC775A2E06EACC003D037C /* ProgramSelectionPopup.swift */; };
 		D4E7F1D02CA4B555005886B7 /* GameManual.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E7F1CF2CA4B555005886B7 /* GameManual.swift */; };
 		D4E7F1D22CA4C267005886B7 /* TeamworkScoreCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E7F1D12CA4C267005886B7 /* TeamworkScoreCalculator.swift */; };
 		D4F0846A2CA47C230032E72D /* ADCHubDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D73E3AB2AB330CD005BE836 /* ADCHubDataController.swift */; };
@@ -151,6 +152,7 @@
 		D4C6BFC52CD26FE90034C350 /* PilotingSkillsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotingSkillsCalculator.swift; sourceTree = "<group>"; };
 		D4C6BFC72CD270B70034C350 /* ScoreCalculatorsHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreCalculatorsHome.swift; sourceTree = "<group>"; };
 		D4C6BFC92CD2732F0034C350 /* AutonomousFlightSkillsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutonomousFlightSkillsCalculator.swift; sourceTree = "<group>"; };
+		D4CC775A2E06EACC003D037C /* ProgramSelectionPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramSelectionPopup.swift; sourceTree = "<group>"; };
 		D4E7F1CF2CA4B555005886B7 /* GameManual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManual.swift; sourceTree = "<group>"; };
 		D4E7F1D12CA4C267005886B7 /* TeamworkScoreCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamworkScoreCalculator.swift; sourceTree = "<group>"; };
 		D4F084A62CA47DDE0032E72D /* ADCHubAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCHubAPI.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 		3DB11E4C299543D9001DDB02 /* RoboNexus */ = {
 			isa = PBXGroup;
 			children = (
+				D4CC775A2E06EACC003D037C /* ProgramSelectionPopup.swift */,
 				D43F76BC2DB680A60065DC91 /* FavoriteTeamsMatches.swift */,
 				D4AB4E792D931F6600218475 /* MatchScoreEntry.swift */,
 				D4BBB7312D809D16004E4E6E /* AgendaView.swift */,
@@ -521,6 +524,7 @@
 				D4F084762CA47C230032E72D /* EventView.swift in Sources */,
 				D4F084772CA47C230032E72D /* EventInformation.swift in Sources */,
 				D4AB4E7A2D931F6600218475 /* MatchScoreEntry.swift in Sources */,
+				D4CC775B2E06EACC003D037C /* ProgramSelectionPopup.swift in Sources */,
 				D4F084782CA47C230032E72D /* EventTeams.swift in Sources */,
 				D4F084792CA47C230032E72D /* EventTeamView.swift in Sources */,
 				D4C6BFCA2CD273300034C350 /* AutonomousFlightSkillsCalculator.swift in Sources */,
@@ -784,7 +788,7 @@
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -840,7 +844,7 @@
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skyler.adchub;
 				PRODUCT_NAME = RoboNexus;
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -150,7 +150,7 @@ public class ADCHubAPI {
     // MARK: - Dynamic Program ID Support
     public static func selected_program_id() -> Int {
         // Expecting UserSettings.getSelectedProgram() to return "ADC", "VIQRC", "VURC", or "V5RC"
-        let programStr = UserSettings.getSelectedProgram() ?? "ADC"
+        let programStr = UserSettings.getSelectedProgram() ?? ProgramType.v5rc.rawValue
         let mapping: [String: Int] = [
             "Aerial Drone Competition": 44,
             "VEX IQ Robotics Competition": 41,
@@ -158,7 +158,7 @@ public class ADCHubAPI {
             "VEX V5 Robotics Competition": 1,
             "VEX AI Robotics Competition" : 57
         ]
-        return mapping[programStr] ?? 44
+        return mapping[programStr] ?? 1
     }
     
     public static func robotevents_date(date: String, localize: Bool) -> Date? {
@@ -322,7 +322,7 @@ public class ADCHubAPI {
         let seasonID = self.selected_season_id()
         let dispatchGroup = DispatchGroup()
         
-        let programStr = UserSettings.getSelectedProgram() ?? "Aerial Drone Competition"
+        let programStr = UserSettings.getSelectedProgram() ?? ProgramType.v5rc.rawValue
         switch programStr {
         case "Aerial Drone Competition":
             dispatchGroup.enter()
@@ -394,7 +394,7 @@ public class ADCHubAPI {
     /// Returns the WorldSkills object for a given team by checking the appropriate cache
     /// based on the selected program and the team's grade.
     public func world_skills_for(team: Team) -> WorldSkills? {
-        let prog = UserSettings.getSelectedProgram() ?? "Aerial Drone Competition"
+        let prog = UserSettings.getSelectedProgram() ?? ProgramType.v5rc.rawValue
         var cache: WorldSkillsCache
         if prog == "Aerial Drone Competition" {
             if team.grade == "Middle School" {
