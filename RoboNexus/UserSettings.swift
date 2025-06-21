@@ -110,8 +110,12 @@ class UserSettings: ObservableObject {
         self.selected_season_id = defaults.object(forKey: "selected_season_id") as? Int
             ?? API.active_season_id()
         
-        // NEW: Initialize the selected program.
-        self.selectedProgram = defaults.object(forKey: "selectedProgram") as? String ?? "Aerial Drone Competition"
+        // NEW: Initialize the selected program, defaulting to the first
+        // selectable program when none is stored. This keeps ADC hidden
+        // when Developer Mode is disabled.
+        self.selectedProgram = defaults.object(forKey: "selectedProgram") as? String
+            ?? ProgramType.selectableCases.first?.rawValue
+            ?? ProgramType.viqrc.rawValue
         
         // NEW: Read haptics toggle from UserDefaults.
         self.enableHaptics = defaults.bool(forKey: "enableHaptics")
@@ -138,8 +142,11 @@ class UserSettings: ObservableObject {
         self.selected_season_id = defaults.object(forKey: "selected_season_id") as? Int
             ?? API.selected_season_id()
         
-        // NEW: Re-read the selected program.
-        self.selectedProgram = defaults.object(forKey: "selectedProgram") as? String ?? "Aerial Drone Competition"
+        // NEW: Re-read the selected program, defaulting to the first selectable
+        // program so ADC remains hidden when developer mode is off.
+        self.selectedProgram = defaults.object(forKey: "selectedProgram") as? String
+            ?? ProgramType.selectableCases.first?.rawValue
+            ?? ProgramType.viqrc.rawValue
         
         // NEW: Re-read haptics setting.
         self.enableHaptics = defaults.bool(forKey: "enableHaptics")
