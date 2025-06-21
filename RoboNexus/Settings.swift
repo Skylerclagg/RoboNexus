@@ -69,7 +69,11 @@ struct Settings: View {
     var programBinding: Binding<ProgramType> {
         Binding<ProgramType>(
             get: {
-                return ProgramType(rawValue: settings.selectedProgram) ?? .adc
+                let current = ProgramType(rawValue: settings.selectedProgram) ?? .viqrc
+                if current == .adc && !UserDefaults.standard.bool(forKey: "DeveloperModeEnabled") {
+                    return ProgramType.selectableCases.first ?? .viqrc
+                }
+                return current
             },
             set: { newProgram in
                 // Update the program in UserSettings and persist it.
@@ -104,7 +108,7 @@ struct Settings: View {
                 // MARK: - Program Selection Section
                 Section("Program Selection") {
                     Picker("Program", selection: programBinding) {
-                        ForEach(ProgramType.allCases) { program in
+                        ForEach(ProgramType.selectableCases) { program in
                             Text(program.displayName).tag(program)
                         }
                     }

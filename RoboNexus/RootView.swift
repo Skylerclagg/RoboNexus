@@ -24,11 +24,13 @@ struct RootView: View {
     @EnvironmentObject var favorites: FavoriteStorage
     @EnvironmentObject var dataController: ADCHubDataController
     @EnvironmentObject var configManager: ConfigManager  // Access to current program if needed
+    @EnvironmentObject var eventSearch: EventSearch
 
     @StateObject var navigation_bar_manager = NavigationBarManager(title: "Favorites")
     
     @State private var tab_selection = 0
     @State private var lookup_type = 0 // 0 is teams, 1 is events
+    @State private var showProgramPrompt = false
     
     var body: some View {
         NavigationStack {
@@ -99,12 +101,20 @@ struct RootView: View {
             .environmentObject(dataController)
             .environmentObject(navigation_bar_manager)
             .environmentObject(configManager)
+            .environmentObject(eventSearch)
             .tint(settings.buttonColor())
             .onAppear {
                 // Configure tab bar appearance on iOS 15+
                 let tabBarAppearance = UITabBarAppearance()
                 tabBarAppearance.configureWithDefaultBackground()
                 UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+
+                // Show program selection prompt on first launch after update
+                let currentVersion = UIApplication.appVersion
+                let lastPrompt = UserDefaults.standard.string(forKey: "lastProgramPromptVersion")
+                if lastPrompt != currentVersion {
+                    showProgramPrompt = true
+                }
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -151,6 +161,12 @@ struct RootView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(settings.tabColor(), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .sheet(isPresented: $showProgramPrompt) {
+                ProgramSelectionPopup(isPresented: $showProgramPrompt)
+                    .environmentObject(settings)
+                    .environmentObject(configManager)
+                    .environmentObject(eventSearch)
+            }
         }
         .tint(settings.topBarContentColor())
     }
