@@ -1,4 +1,5 @@
-# ADC Hub
+# RoboNexus (Formerly ADC Hub)
+# This Codebase is no longer recieving updates or support, I have transitioned over to my new React Native Version with the repository name RoboNexusRN
 An iOS application to allow teams to easily access match lists and scores as well as world skills rankings, the game manual, and scoring calculators.
 
 
